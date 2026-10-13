@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowRight, Check, Flag, MapPin, Navigation, Package, Phone, Siren } from 'lucide-react';
 import { Banner, Button, Card, Field, Modal, TextArea, TextInput, useToast } from '../../ds';
-import { useRootX, useDispatchRootX, myRider, activeGuidanceNow } from '../../engine/store';
-import { SchematicMap } from '../../components/SchematicMap';
+import { useRootX, useDispatchRootX, useNet, myRider, activeGuidanceNow } from '../../engine/store';
+import { LiveMap } from '../../components/LiveMap';
 import { Money, timeAgo } from '../../components/bits';
 import { OSOGBO_CAMPUS, OKE_BAAALE } from '../../engine/zones';
 import { attemptsLeft } from '../../engine/verification';
@@ -24,6 +24,7 @@ export default function RiderActive() {
   const d = state.deliveries.find((x) => x.id === id);
   const now = state.clock.epoch;
   const guidance = activeGuidanceNow(state);
+  const net = useNet();
 
   const [code, setCode] = useState('');
   const [codeErr, setCodeErr] = useState<string | null>(null);
@@ -46,26 +47,33 @@ export default function RiderActive() {
   const deliveryLocked = !!(d.verification.deliveryLockedUntil && now < d.verification.deliveryLockedUntil);
   const currentStopIdx = ['rider_assigned', 'rider_approaching_pickup', 'at_pickup', 'pickup_verification_pending'].includes(d.status) ? 0 : d.stops.length - 1;
 
-  function act(action: Parameters<typeof dispatch>[0] extends never ? never : 'approach' | 'arrive_pickup' | 'request_pickup_code' | 'depart' | 'approach_dest' | 'arrive_dest') {
-    dispatch({ type: 'delivery/riderAction', deliveryId: d!.id, action });
-    if (state.demo.offline) toast('Queued — will sync when you reconnect.', 'warn');
+  async function act(action: 'approach' | 'arrive_pickup' | 'request_pickup_code' | 'depart' | 'approach_dest' | 'arrive_dest') {
+    const res = await dispatch({ type: 'delivery/riderAction', deliveryId: d!.id, action });
+    if (!res) toast('Offline — the update is queued and will sync when you reconnect.', 'warn');
   }
 
-  function verifyCode(kind: 'pickup' | 'delivery') {
-    const res = dispatch({ type: 'delivery/verifyCode', deliveryId: d!.id, kind, code, by: 'rider' });
-    void res;
-    // outcome feedback is derived from state after dispatch; approximate here:
-    if (kind === 'pickup' ? pickupLocked : deliveryLocked) {
-      setCodeErr('Temporarily locked after too many wrong attempts. Ask the sender/receiver to resend via support.');
+  async function verifyCode(kind: 'pickup' | 'delivery') {
+    const res = await dispatch({ type: 'delivery/verifyCode', deliveryId: d!.id, kind, code, by: 'rider' });
+    if (!res) {
+      toast('Offline — code checks need a connection and will not be queued. Try again when reconnected.', 'warn');
       return;
     }
-    if (code === (kind === 'pickup' ? d!.pickupCode : d!.deliveryCode)) {
+    const nd = res.state?.deliveries.find((x) => x.id === d!.id);
+    if (!nd) return;
+    const advanced = kind === 'pickup' ? nd.status !== 'pickup_verification_pending' : !['delivery_verification_pending'].includes(nd.status);
+    if (advanced) {
       setCode('');
       setCodeErr(null);
       toast(kind === 'pickup' ? 'Pickup verified. You can collect the package.' : 'Delivery verified. Run complete — earnings pending settlement.', 'success');
-    } else {
-      setCodeErr(`Wrong code. ${kind === 'pickup' ? pickupLeft - 1 : deliveryLeft - 1} attempt(s) left before a temporary lock.`);
+      return;
     }
+    const lockedUntil = nd.verification[kind === 'pickup' ? 'pickupLockedUntil' : 'deliveryLockedUntil'];
+    if (lockedUntil && nd.status === (kind === 'pickup' ? 'pickup_verification_pending' : 'delivery_verification_pending')) {
+      setCodeErr('Temporarily locked after too many wrong attempts. Ask the sender/receiver to resend via support.');
+      return;
+    }
+    const left = attemptsLeft(nd.verification, state.config.policies, kind);
+    setCodeErr(`Wrong code. ${left} attempt(s) left before a temporary lock.`);
   }
 
   return (
@@ -86,10 +94,10 @@ export default function RiderActive() {
         <Banner tone="warn" title="Past 9 PM">{guidance.message}</Banner>
       )}
 
-      {state.demo.offline && (
+      {!net.online && (
         <Banner tone="warn" title="Offline — updates queued">
-          {state.networkQueue.filter((q) => q.deliveryId === d.id).length} update(s) for this run will sync automatically. Payments
-          and code verification always confirm with the server first.
+          {net.queued} update(s) will sync automatically when you reconnect. Code verification always confirms with the
+          server first and is never queued.
         </Banner>
       )}
 
@@ -133,7 +141,7 @@ export default function RiderActive() {
         </p>
       </Card>
 
-      <SchematicMap
+      <LiveMap
         zones={[OSOGBO_CAMPUS, OKE_BAAALE]}
         height={260}
         route={d.route.points}
@@ -197,7 +205,8 @@ export default function RiderActive() {
         <Card className="stack">
           <div className="data-label">Enter the pickup code from the sender</div>
           <Banner tone="info" icon={Check}>
-            Demo: the sender's code is <strong className="mono">{d.pickupCode}</strong> (in production only the sender sees it).
+            The sender reads this code from their ROOT-X app — ask them for it at handover. Codes are attempt-limited; a
+            wrong series locks verification temporarily.
           </Banner>
           <div className="row">
             <TextInput
@@ -238,8 +247,7 @@ export default function RiderActive() {
         <Card className="stack">
           <div className="data-label">Enter the delivery code from the receiver</div>
           <Banner tone="info" icon={Check}>
-            Demo: the receiver's code is <strong className="mono">{d.deliveryCode}</strong> (in production only the receiver sees it —
-            via their private link or SMS).
+            The receiver reads this code from their private tracking link — ask them at handover. Codes are attempt-limited.
           </Banner>
           <div className="row">
             <TextInput

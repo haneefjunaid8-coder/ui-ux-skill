@@ -210,3 +210,48 @@ describe('end-to-end journey', () => {
     expect(expired.trackingToken.expiresAt).toBeLessThan(s.clock.epoch);
   });
 });
+
+describe('wallet top-ups and account prefs', () => {
+  it('top-up runs the gateway lifecycle: processing → webhook → credited, once', () => {
+    let s = boot();
+    s = reducer(s, { type: 'auth/quickLogin', userId: 'u-ada' });
+    const before = s.users.find((u) => u.id === 'u-ada')!.walletBalance;
+
+    // bounds enforced
+    s = reducer(s, { type: 'wallet/topUp', amount: 100, method: 'card' });
+    expect(s.topups.length).toBe(0);
+    s = reducer(s, { type: 'wallet/topUp', amount: 5_000, method: 'card' });
+    expect(s.topups.length).toBe(1);
+    expect(s.topups[0].status).toBe('processing');
+    expect(s.users.find((u) => u.id === 'u-ada')!.walletBalance).toBe(before); // never instantly credited
+
+    // idempotency: one in-flight top-up per user
+    s = reducer(s, { type: 'wallet/topUp', amount: 5_000, method: 'card' });
+    expect(s.topups.length).toBe(1);
+
+    s = until(s, (x) => x.topups[0].status !== 'processing', 30_000);
+    const tu = s.topups[0];
+    expect(tu.status).toBe('succeeded');
+    expect(s.users.find((u) => u.id === 'u-ada')!.walletBalance).toBe(before + 5_000);
+    // notification for the credit
+    expect(s.notifications.some((n) => n.userId === 'u-ada' && n.title === 'Wallet topped up')).toBe(true);
+
+    // a failed top-up never credits
+    s = reducer(s, { type: 'demo/toggle', key: 'forcePaymentFail' });
+    s = reducer(s, { type: 'wallet/topUp', amount: 2_000, method: 'transfer' });
+    s = until(s, (x) => x.topups[0].status !== 'processing', 40_000);
+    expect(s.topups[0].status).toBe('failed');
+    expect(s.users.find((u) => u.id === 'u-ada')!.walletBalance).toBe(before + 5_000);
+  });
+
+  it('notification prefs persist per channel and require a session', () => {
+    let s = boot();
+    expect(reducer(s, { type: 'user/notifyPref', channel: 'email', value: false })).toBe(s); // anonymous: rejected
+    s = reducer(s, { type: 'auth/quickLogin', userId: 'u-ada' });
+    s = reducer(s, { type: 'user/notifyPref', channel: 'email', value: false });
+    s = reducer(s, { type: 'user/notifyPref', channel: 'push', value: true });
+    const ada = s.users.find((u) => u.id === 'u-ada')!;
+    expect(ada.notifyPrefs.email).toBe(false);
+    expect(ada.notifyPrefs.push).toBe(true);
+  });
+});

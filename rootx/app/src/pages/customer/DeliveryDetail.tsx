@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Copy, Flag, MessageSquare, Phone, QrCode, Star, XCircle } from 'lucide-react';
 import { Banner, Button, Card, Field, Modal, TextArea, TextInput, useToast } from '../../ds';
 import { useRootX, useDispatchRootX, currentUser, activeGuidanceNow, activeZones } from '../../engine/store';
-import { SchematicMap } from '../../components/SchematicMap';
+import { LiveMap } from '../../components/LiveMap';
 import { TrackingTimeline, StatusHistoryList } from '../../components/Timeline';
 import { DeliveryStatusPill, Money, fmtDay, fmtTime, timeAgo } from '../../components/bits';
 import { cancellationStage } from '../../engine/stateMachine';
@@ -55,7 +55,7 @@ export default function DeliveryDetail() {
       {/* live map */}
       {(onRoad || d.status === 'offered_to_riders' || d.status === 'rider_assigned') && (
         <div className="stack-sm">
-          <SchematicMap
+          <LiveMap
             zones={zones}
             height={280}
             route={d.route.points}

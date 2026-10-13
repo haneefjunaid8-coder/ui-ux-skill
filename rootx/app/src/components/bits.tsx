@@ -126,7 +126,7 @@ export function PhotoTile({ src, onRemove, alt }: { src: string; onRemove?: () =
         <button
           onClick={onRemove}
           aria-label="Remove photo"
-          style={{ position: 'absolute', top: 3, right: 3, width: 22, height: 22, borderRadius: '50%', border: 'none', background: 'oklch(0.2 0.02 80 / 0.65)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ position: 'absolute', top: 3, right: 3, width: 22, height: 22, borderRadius: '50%', border: 'none', background: 'oklch(0.1 0.02 258 / 0.7)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
           <XCircle size={13} />
         </button>

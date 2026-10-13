@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Camera, Check, CreditCard, Landmark, MapPin, Plus, Repeat, Trash2, Wallet as WalletIcon, Banknote, ArrowRight } from 'lucide-react';
 import { Banner, Button, Card, Field, Modal, RadioCard, Segmented, Select, Stepper, TextArea, TextInput, Toggle, useToast } from '../../ds';
 import { useRootX, useDispatchRootX, currentUser, activeZones, serviceWindowNow } from '../../engine/store';
-import { SchematicMap } from '../../components/SchematicMap';
+import { LiveMap } from '../../components/LiveMap';
 import { Money, PhotoTile } from '../../components/bits';
 import { fmtNaira } from '../../engine/ledger';
 import { checkZoneEligibility, ALL_ZONES } from '../../engine/zones';
@@ -42,7 +42,7 @@ export default function CreateDelivery() {
   const navigate = useNavigate();
   const user = currentUser(state)!;
   const zones = activeZones(state);
-  const demoZones = zones.filter((z) => z.id === 'osogbo-campus' || z.id === 'oke-baale');
+  const bookableZones = zones.filter((z) => z.id === 'osogbo-campus' || z.id === 'oke-baale');
 
   const [step, setStep] = useState(0);
   const [selectingIdx, setSelectingIdx] = useState<number | null>(0);
@@ -311,10 +311,10 @@ export default function CreateDelivery() {
             </p>
           </div>
 
-          <SchematicMap
-            zones={demoZones.length ? demoZones : zones}
+          <LiveMap
+            zones={bookableZones.length ? bookableZones : zones}
             height={330}
-            caption="Tap the map to place the selected stop, or tap a landmark square. Zones shown: approved campus + township (demo geometry)."
+            caption="Tap the map to place the selected stop, or tap a landmark square. Approved campus + township zones."
             highlightLandmarkId={sel?.landmarkId}
             pins={stops.filter((s) => s.x).map((s, i) => ({ x: s.x, y: s.y, kind: s.kind === 'pickup' ? 'pickup' : 'dropoff', index: i + 1, label: selectingIdx === i ? 'Setting…' : undefined }))}
             route={stops.every((s) => s.x) ? stops.map((s) => ({ x: s.x, y: s.y })) : undefined}
@@ -415,7 +415,7 @@ export default function CreateDelivery() {
                 </label>
                 <button className="btn btn-ghost btn-sm" style={{ height: 64, flexDirection: 'column', gap: 2, fontSize: 'var(--text-2xs)' }} onClick={() => setPkg((p) => ({ ...p, photos: [...p.photos, svgPhoto('PACKAGE PHOTO', '#2f855a')] }))}>
                   <Camera size={18} />
-                  Demo photo
+                  Sample photo
                 </button>
               </div>
             </Field>
@@ -588,7 +588,7 @@ export default function CreateDelivery() {
             <div className="data-label">Pay with</div>
             <div className="stack-sm">
               <RadioCard selected={payMethod === 'wallet'} onSelect={() => setPayMethod('wallet')} title="ROOT-X wallet" desc={`Balance ${fmtNaira(user.walletBalance)}`} icon={WalletIcon} />
-              <RadioCard selected={payMethod === 'card'} onSelect={() => setPayMethod('card')} title="Bank card" desc="Demo gateway — no real charge" icon={CreditCard} />
+              <RadioCard selected={payMethod === 'card'} onSelect={() => setPayMethod('card')} title="Bank card" desc="Sandbox gateway — no real charge" icon={CreditCard} />
               <RadioCard selected={payMethod === 'transfer'} onSelect={() => setPayMethod('transfer')} title="Bank transfer" desc="Reference + webhook confirmation" icon={Banknote} />
             </div>
           </Card>
@@ -613,7 +613,7 @@ export default function CreateDelivery() {
               <Money value={created.quote.total} size="var(--text-xl)" />
             </div>
             <Banner tone="info">
-              Demo gateway — {payMethod === 'wallet' ? 'wallet debit' : payMethod === 'card' ? 'card charge (auto-resolves in a few seconds; toggle "force fail" in DEMO controls to test failure)' : 'transfer with reference + simulated webhook'}.
+              Prototype gateway — {payMethod === 'wallet' ? 'wallet debit' : payMethod === 'card' ? 'card charge, confirmed by webhook in a few seconds' : 'bank transfer with a reference, confirmed by webhook'}.
             </Banner>
             {created.status === 'awaiting_payment' && (
               <Button block size="lg" loading={paying} onClick={pay}>
@@ -625,7 +625,6 @@ export default function CreateDelivery() {
                 {payMethod === 'transfer'
                   ? 'Transfer the amount to the ROOT-X account with reference shown in your wallet. The gateway webhook will confirm automatically (simulated).'
                   : 'Confirming with the gateway…'}
-                {state.demo.forcePaymentFail && ' (Failure toggle is ON — this will decline.)'}
               </Banner>
             )}
             {created.status === 'awaiting_payment' && created.payment?.status === 'failed' && (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Plus } from 'lucide-react';
 import { Banner, Button, Card, Field, Modal, TextArea, TextInput, useToast } from '../../ds';
 import { useRootX, useDispatchRootX, currentUser } from '../../engine/store';
-import { SchematicMap } from '../../components/SchematicMap';
+import { LiveMap } from '../../components/LiveMap';
 import { OSOGBO_CAMPUS, OKE_BAAALE } from '../../engine/zones';
 import { fmtNaira } from '../../engine/ledger';
 
@@ -37,7 +37,7 @@ export default function AdminZones() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1.4fr) minmax(260px, 1fr)', gap: 16 }} className="zones-grid">
         <style>{`@media (max-width: 900px){ .zones-grid{grid-template-columns: 1fr !important} }`}</style>
-        <SchematicMap
+        <LiveMap
           zones={[OSOGBO_CAMPUS, OKE_BAAALE]}
           height={360}
           showAllLandmarkLabels

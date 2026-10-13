@@ -161,9 +161,9 @@ export default function RiderApply() {
                   }}
                 />
               </label>
-              <button className="btn btn-ghost btn-md" style={{ height: 64, flexDirection: 'column', gap: 2, fontSize: 'var(--text-2xs)' }} onClick={() => setIdDoc(svgPhoto('STUDENT ID CARD', '#4a5568', 'demo document'))}>
+              <button className="btn btn-ghost btn-md" style={{ height: 64, flexDirection: 'column', gap: 2, fontSize: 'var(--text-2xs)' }} onClick={() => setIdDoc(svgPhoto('STUDENT ID CARD', '#4a5568', 'sample document'))}>
                 <FileCheck2 size={18} />
-                Demo doc
+                Sample doc
               </button>
             </div>
           </Field>

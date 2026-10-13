@@ -11,7 +11,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | # | Assumption | Basis | Verification |
 |---|---|---|---|
 | A-1 | Students have smartphones with data and can install/use a PWA | University context | Pilot onboarding survey |
-| A-2 | Current brand (name mark, teal ramp) is placeholder | Founder instruction | Branding exercise pre-launch |
+| A-2 | Brand: **palette resolved 2026-10-13** (Campus Neon dark identity — D-11); name + wordmark still placeholder | Founder instruction + decision | Wordmark exercise pre-launch |
 | A-3 | One campus (Osogbo) + Oke-Baale township is the right pilot scope | Brief | Founder sign-off on pilot zone map |
 | A-4 | Demand ≈ 30–50 runs/day at pilot | Analogy, not data | Week-2 pilot metrics |
 | A-5 | Students will accept OTP-only auth | Common NG pattern | Conversion funnel |
@@ -29,7 +29,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | U-2 | Payment provider | Paystack-class vs Flutterwave-class vs bank direct | webhook reliability, transfer support, fees, settlement cadence, dispute tooling | none — provider-agnostic interface |
 | U-3 | Pen-test vendor & timing | pre-pilot vs pre-public-launch | budget, launch date, risk appetite | scheduled pre-pilot (docs/20) |
 | U-4 | Legal counsel scope | NDPR review only vs full ToS/Privacy/DSA review | cost, features shipped | NDPR review mandatory pre-pilot |
-| U-5 | Map tile strategy | self-host PMTiles vs commercial OSM provider | cost, offline needs, ops burden | provider TBD; schematic map in prototype |
+| U-5 | Map tile strategy | self-host PMTiles vs commercial OSM provider | cost, offline needs, ops burden | prototype ships **real Leaflet/OSM** (CARTO dark tiles, UNIOSUN Osogbo coordinates); zone polygons are schematic overlays (D-8) |
 | U-6 | Native shells | PWA-only vs Capacitor vs React Native | push reliability, background location on iOS | PWA first, shells post-pilot |
 | U-7 | Payout rails | provider transfers vs bank bulk payments | fees, rider bank coverage, speed | provider transfers assumed |
 | U-8 | SMS provider | local aggregators vs cloud (Twilio-class) | delivery rates in Nigeria, cost | undecided |
@@ -63,9 +63,12 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | D-5 | OSM over Google Maps | cost, control, open data | coverage proves inadequate |
 | D-6 | Two-person settlement in DB CHECK | defence in depth | never |
 | D-7 | No automated penalties, by architecture | C-6 is cultural + technical | never (foundational) |
-| D-8 | Schematic map in prototype | testable geofencing without infra | production swap is renderer-only |
+| D-8 | Zone geometry schematic in prototype (basemap is real OSM/Leaflet since 2026-10-13) | testable geofencing without surveying infra | surveyed polygons land in PostGIS |
 | D-9 | Integer kobo everywhere | money integrity | never |
 | D-10 | Config-driven pricing/hours/zones | no-deploy policy changes (C-7 adjacent) | never |
+| D-11 | Campus Neon dark identity app-wide (2026-10-13) | deliberate founder decision; extends the landing's language to the product (docs/06 §8) | rebrand exercise |
+| D-12 | Real authoritative server (Fastify + SQLite) with SSE, sessions, per-viewer redaction; human-driven riders only | prototype must exercise the production trust model, not simulate it | production build-out |
+| D-13 | OTP codes returned in the otpRequest response (shown in-app) | no SMS gateway in prototype (U-8); keeps the flow real: rate-limited, attempt-limited, redacted everywhere else | SMS provider lands |
 
 ## 6. Prohibited claims (standing reminder)
 
@@ -74,3 +77,4 @@ Until verified in writing, ROOT-X must not claim: UNIOSUN partnership, endorseme
 ## 7. Change log for this document
 
 - v0.1 — initial register from the prototype build; U-1/U-2 flagged as the first two decisions the founder must make.
+- v0.2 — 2026-10-13: dark identity decision recorded (D-11, A-2 palette half resolved); real server + real OSM map shipped (D-12, U-5/D-8 updated); OTP delivery channel documented (D-13, U-8 unchanged — no SMS yet).

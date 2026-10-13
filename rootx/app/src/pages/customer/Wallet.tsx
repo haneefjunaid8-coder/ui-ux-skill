@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
 import { ArrowDownLeft, ArrowUpRight, Download, Plus, Wallet as WalletIcon } from 'lucide-react';
 import { Banner, Button, Card, Field, Modal, Segmented, TextInput, useToast } from '../../ds';
-import { useRootX, currentUser, myDeliveries } from '../../engine/store';
+import { useRootX, useDispatchRootX, currentUser, myDeliveries } from '../../engine/store';
 import { Money, fmtDay, fmtTime } from '../../components/bits';
 
 /* Wallet — balances and transactions are ledger records, never editable
-   profile fields. Prototype simulates top-ups; production goes through the
-   payment gateway with reconciliation. */
+   profile fields. Top-ups run the real gateway lifecycle (processing →
+   webhook verification → credit) exactly like delivery payments. */
 
 export default function WalletPage() {
   const state = useRootX();
+  const dispatch = useDispatchRootX();
   const toast = useToast();
   const user = currentUser(state)!;
   const mine = myDeliveries(state, user.id);
   const now = state.clock.epoch;
   const [topUp, setTopUp] = useState(false);
   const [amount, setAmount] = useState(2000);
+  const [method, setMethod] = useState<'card' | 'transfer'>('card');
 
   const txns = [
+    ...state.topups
+      .filter((tu) => tu.userId === user.id)
+      .map((tu) => ({
+        id: tu.id,
+        at: tu.events[tu.events.length - 1]?.at ?? tu.events[0]?.at ?? 0,
+        label: `Wallet top-up — ${tu.method === 'card' ? 'card' : 'bank transfer'}`,
+        amount: tu.status === 'succeeded' ? tu.amount : 0,
+        status: tu.status,
+      })),
     ...mine
       .filter((d) => d.payment)
       .map((d) => ({
@@ -51,12 +62,12 @@ export default function WalletPage() {
       <h1>Wallet</h1>
 
       <Card className="stack" style={{ background: 'linear-gradient(150deg, var(--root-700), var(--root-900))', borderColor: 'var(--root-800)', color: 'white' }}>
-        <div className="data-label" style={{ color: 'oklch(0.9 0.04 150)' }}>Available balance</div>
+        <div className="data-label" style={{ color: 'var(--root-300)' }}>Available balance</div>
         <div className="mono" style={{ fontSize: 'var(--text-3xl)', fontWeight: 700, letterSpacing: '-0.02em' }}>
           ₦{user.walletBalance.toLocaleString('en-NG')}
         </div>
         <div className="row" style={{ gap: 8 }}>
-          <Button variant="secondary" size="sm" icon={Plus} onClick={() => setTopUp(true)} style={{ background: 'oklch(1 0 0 / 0.14)', borderColor: 'oklch(1 0 0 / 0.25)', color: 'white' }}>
+          <Button variant="secondary" size="sm" icon={Plus} onClick={() => setTopUp(true)} style={{ background: 'oklch(1 0 0 / 0.08)', borderColor: 'oklch(1 0 0 / 0.18)', color: 'var(--ink)' }}>
             Top up
           </Button>
           <Button variant="ghost" size="sm" icon={Download} onClick={downloadStatement} style={{ color: 'white' }}>
@@ -97,12 +108,14 @@ export default function WalletPage() {
           <>
             <Button variant="ghost" onClick={() => setTopUp(false)}>Cancel</Button>
             <Button
-              onClick={() => {
+              onClick={async () => {
+                const res = await dispatch({ type: 'wallet/topUp', amount, method });
                 setTopUp(false);
-                toast(`Demo: ₦${amount.toLocaleString()} top-up would go through the payment gateway.`, 'success');
+                if (res) toast(`Top-up of ₦${amount.toLocaleString('en-NG')} initiated — it credits when the gateway confirms.`, 'success');
+                else toast('Offline — the top-up is queued and will be sent when you reconnect.', 'warn');
               }}
             >
-              Continue (demo)
+              Continue
             </Button>
           </>
         }
@@ -116,7 +129,19 @@ export default function WalletPage() {
           onChange={(v) => setAmount(Number(v))}
           options={[1000, 2000, 5000].map((n) => ({ value: String(n), label: `₦${n.toLocaleString()}` }))}
         />
-        <Banner tone="info">Demo gateway — production supports cards and bank transfer with webhook confirmation and idempotency keys.</Banner>
+        <Segmented
+          ariaLabel="Payment method"
+          value={method}
+          onChange={(v) => setMethod(v as 'card' | 'transfer')}
+          options={[
+            { value: 'card', label: 'Bank card' },
+            { value: 'transfer', label: 'Bank transfer' },
+          ]}
+        />
+        <Banner tone="info">
+          Payments run on the prototype gateway — no real money moves. Card charges confirm in a few seconds; transfers confirm
+          by webhook with the reference. Every request carries an idempotency key.
+        </Banner>
       </Modal>
     </div>
   );

@@ -140,7 +140,7 @@ function QuickAction({ to, icon: Icon, title, sub, primary }: { to: string; icon
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: primary ? 'oklch(1 0 0 / 0.16)' : 'var(--root-50)',
+          background: primary ? 'oklch(1 0 0 / 0.1)' : 'var(--root-950)',
           color: primary ? 'white' : 'var(--root-700)',
           flexShrink: 0,
         }}
@@ -149,7 +149,7 @@ function QuickAction({ to, icon: Icon, title, sub, primary }: { to: string; icon
       </span>
       <span>
         <span style={{ display: 'block', fontWeight: 700, color: primary ? 'white' : 'var(--ink)' }}>{title}</span>
-        <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: primary ? 'oklch(0.97 0.01 150)' : 'var(--ink-3)' }}>{sub}</span>
+        <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: primary ? 'oklch(0.98 0.005 258)' : 'var(--ink-3)' }}>{sub}</span>
       </span>
     </Link>
   );

@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bike, Download, Landmark, ShieldCheck, Trash2 } from 'lucide-react';
 import { Banner, Button, Card, Field, Modal, TextInput, Toggle, useToast } from '../../ds';
-import { useRootX, currentUser } from '../../engine/store';
+import { useRootX, useDispatchRootX, currentUser } from '../../engine/store';
 import { Avatar } from '../../ds';
 
 export default function Profile() {
   const state = useRootX();
+  const dispatch = useDispatchRootX();
   const toast = useToast();
   const navigate = useNavigate();
   const user = currentUser(state)!;
@@ -62,7 +63,15 @@ export default function Profile() {
               {ch.toUpperCase()}
               {(ch === 'sms' || ch === 'push') && <span className="faint" style={{ display: 'block', fontSize: 'var(--text-xs)' }}>Security, transaction and safety notices always stay on.</span>}
             </span>
-            <Toggle checked={user.notifyPrefs[ch]} onChange={() => toast('Preference saved (demo — not persisted in the prototype store).')} label={`${ch} notifications`} />
+            <Toggle
+              checked={user.notifyPrefs[ch]}
+              onChange={async () => {
+                const res = await dispatch({ type: 'user/notifyPref', channel: ch, value: !user.notifyPrefs[ch] });
+                if (res) toast(`${ch.toUpperCase()} notifications ${!user.notifyPrefs[ch] ? 'on' : 'off'}.`, 'success');
+                else toast('Offline — the change will sync when you reconnect.', 'warn');
+              }}
+              label={`${ch} notifications`}
+            />
           </label>
         ))}
       </Card>
@@ -74,7 +83,7 @@ export default function Profile() {
           emergency contacts are never shown to other users.
         </p>
         <div className="row wrap" style={{ gap: 8 }}>
-          <Button variant="secondary" size="sm" icon={Download} onClick={() => toast('Data export would be generated per NDPA subject-access request timelines (demo).', 'info')}>
+          <Button variant="secondary" size="sm" icon={Download} onClick={() => toast('Export is not wired in this prototype — production follows NDPA subject-access request timelines.', 'info')}>
             Export my data
           </Button>
           <Button variant="quiet-danger" size="sm" icon={Trash2} onClick={() => setDeleteOpen(true)}>
@@ -95,7 +104,7 @@ export default function Profile() {
         footer={
           <>
             <Button variant="ghost" onClick={() => setDeleteOpen(false)}>Keep account</Button>
-            <Button variant="destructive" onClick={() => { setDeleteOpen(false); toast('Demo: deletion would require settling active deliveries and payouts first.', 'warn'); }}>
+            <Button variant="destructive" onClick={() => { setDeleteOpen(false); toast('Deletion requires settling active deliveries and payouts first — the full workflow is specified in the security doc.', 'warn'); }}>
               Delete anyway
             </Button>
           </>

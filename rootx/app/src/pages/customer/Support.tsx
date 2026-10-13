@@ -32,7 +32,7 @@ export default function Support() {
         <div className="data-label">Your cases</div>
         {myCases.length === 0 ? (
           <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-            No cases. Report a problem from any delivery's detail screen — or check the <Link to="/deliveries">disputed example</Link> seeded for the demo (log in as Tunde).
+            No cases. Report a problem from any delivery's detail screen — or check the <Link to="/deliveries">disputed example</Link> a seeded example case (Tunde's account).
           </p>
         ) : (
           myCases.map((c) => (

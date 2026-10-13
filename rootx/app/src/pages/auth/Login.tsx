@@ -6,8 +6,10 @@ import { useRootX, useDispatchRootX, serviceWindowNow } from '../../engine/store
 import { ServiceStatusChip } from '../../components/bits';
 
 /* ============================================================================
-   Login — phone + OTP (Nigerian-context default), with demo accounts,
-   registration, staff MFA and guest tracking entry.
+   Login — phone + OTP (Nigerian-context default), seeded accounts,
+   registration, staff MFA and guest tracking entry. The OTP code is returned
+   by the auth/otpRequest response (no SMS gateway is wired — docs/19 U-8),
+   so it is kept in local state; the SSE stream re-redacts it.
    ========================================================================== */
 
 const DEMO_ACCOUNTS = [
@@ -32,28 +34,40 @@ export default function Login() {
   const [regZone, setRegZone] = useState('osogbo-campus');
   const [code, setCode] = useState('');
   const [terms, setTerms] = useState(false);
+  const [otpInfo, setOtpInfo] = useState<{ phone: string; code: string | null } | null>(null);
 
   const window = serviceWindowNow(state);
   const user = state.users.find((u) => u.id === selected);
 
-  function sendCode() {
+  async function sendCode() {
+    let phone: string | null = null;
     if (mode === 'register') {
       if (!regName.trim() || !regPhone.trim()) return toast('Enter your name and phone number.', 'warn');
       if (!terms) return toast('Please accept the terms and privacy notice.', 'warn');
-      dispatch({ type: 'auth/otpRequest', phone: regPhone, registering: { name: regName, zoneId: regZone } });
+      phone = regPhone.trim();
     } else if (user) {
-      dispatch({ type: 'auth/otpRequest', phone: user.phone });
-    } else {
-      return;
+      phone = user.phone;
     }
+    if (!phone) return;
+
+    const res = await dispatch({ type: 'auth/otpRequest', phone, ...(mode === 'register' ? { registering: { name: regName.trim(), zoneId: regZone } } : {}) });
+    // the code comes back on this response only; keep a local copy because
+    // the SSE stream redacts it again on the next broadcast
+    const otp = res?.state?.otp ?? null;
+    setOtpInfo(otp ? { phone: otp.phone, code: otp.code } : { phone, code: null });
     setCode('');
     setMode('otp');
-    toast('Verification code sent by SMS (demo).');
+    if (res) toast('Verification code sent.');
+    else toast('You are offline — the code will be requested when the connection returns.', 'warn');
   }
 
-  function verify() {
+  async function verify() {
     if (code.length < 6) return;
-    dispatch({ type: 'auth/otpVerify', code });
+    const res = await dispatch({ type: 'auth/otpVerify', code });
+    if (res && !res.state?.session.userId && !res.state?.session.mfaFor) {
+      toast('That code did not match. Check the digits and try again.', 'warn');
+      setCode('');
+    }
   }
 
   React.useEffect(() => {
@@ -76,7 +90,7 @@ export default function Login() {
           style={{
             flexDirection: 'column',
             padding: 'clamp(32px, 4vw, 64px)',
-            background: 'linear-gradient(165deg, oklch(0.962 0.035 150), oklch(0.925 0.05 80))',
+            background: 'radial-gradient(900px 480px at 20% -10%, oklch(0.32 0.06 300 / 0.28), transparent 60%), linear-gradient(165deg, oklch(0.215 0.034 258), oklch(0.185 0.028 258))',
             borderRight: '1px solid var(--line-subtle)',
           }}
         >
@@ -95,7 +109,7 @@ export default function Login() {
               { icon: Clock, t: '6 PM notice · 9 PM close', d: 'A core operating rule enforced by the matching engine — not a decoration.' },
             ].map((f) => (
               <div key={f.t} className="row" style={{ alignItems: 'flex-start', gap: 14 }}>
-                <span style={{ color: 'var(--root-700)', flexShrink: 0, background: 'oklch(0.94 0.04 150)', borderRadius: 10, padding: 8, display: 'flex' }}>
+                <span style={{ color: 'var(--root-300)', flexShrink: 0, background: 'var(--root-950)', borderRadius: 10, padding: 8, display: 'flex' }}>
                   <f.icon size={20} />
                 </span>
                 <div>
@@ -129,9 +143,9 @@ export default function Login() {
               <>
                 <div>
                   <h2>Sign in</h2>
-                  <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>Pick a demo account to explore its role, or register below.</p>
+                  <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>Choose an account to continue, or register below.</p>
                 </div>
-                <div className="stack-sm" role="list" aria-label="Demo accounts">
+                <div className="stack-sm" role="list" aria-label="Accounts">
                   {DEMO_ACCOUNTS.map((a) => (
                     <button
                       key={a.id}
@@ -187,7 +201,7 @@ export default function Login() {
                 <label className="row" style={{ alignItems: 'flex-start', gap: 10, fontSize: 'var(--text-sm)', color: 'var(--ink-2)' }}>
                   <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} style={{ marginTop: 3, width: 17, height: 17, accentColor: 'var(--root-600)' }} />
                   <span>
-                    I accept the ROOT-X terms, privacy notice and campus delivery rules (demo). I understand prohibited items are
+                    I accept the ROOT-X terms, privacy notice and campus delivery rules. I understand prohibited items are
                     not allowed and location is used only for delivery purposes.
                   </span>
                 </label>
@@ -201,13 +215,20 @@ export default function Login() {
                 <div>
                   <h2>Verify your phone</h2>
                   <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>
-                    Enter the 6-digit code sent to <strong className="mono">{state.otp?.phone}</strong>.
+                    Enter the 6-digit code sent to <strong className="mono">{otpInfo?.phone}</strong>.
                   </p>
                 </div>
-                <Banner tone="info" icon={Bike}>
-                  Demo shortcut — your code is <strong className="mono">{state.otp?.code}</strong>. In production this arrives by SMS
-                  (rate-limited, attempt-limited, never logged in clear).
-                </Banner>
+                {otpInfo?.code ? (
+                  <Banner tone="info" icon={Bike}>
+                    No SMS gateway is wired into this prototype, so your code is shown here:{' '}
+                    <strong className="mono" style={{ fontSize: 'var(--text-md)', letterSpacing: '0.15em' }}>{otpInfo.code}</strong>
+                    . Requests are rate-limited and attempts are limited.
+                  </Banner>
+                ) : (
+                  <Banner tone="warn" icon={Bike}>
+                    Your code will be requested as soon as the connection returns — nothing is sent yet.
+                  </Banner>
+                )}
                 <CodeInput label="Verification code" value={code} onChange={setCode} />
                 <Button block size="lg" onClick={verify} disabled={code.length < 6}>Verify</Button>
                 <Button variant="ghost" block onClick={() => setMode('signin')}>Back</Button>
@@ -221,7 +242,7 @@ export default function Login() {
                   <p className="muted" style={{ fontSize: 'var(--text-sm)' }}>Privileged accounts require multi-factor authentication.</p>
                 </div>
                 <Banner tone="info" icon={KeyRound}>
-                  Demo authenticator code: <strong className="mono">314159</strong>
+                  Staff authenticator code for this prototype: <strong className="mono">314159</strong> (a real TOTP secret is provisioned per staff account in production)
                 </Banner>
                 <CodeInput label="Authenticator code" value={code} onChange={setCode} length={6} />
                 <Button block size="lg" onClick={() => dispatch({ type: 'auth/mfaVerify', code })} disabled={code.length < 6}>
@@ -232,7 +253,7 @@ export default function Login() {
           </div>
 
           <p className="faint" style={{ fontSize: 'var(--text-xs)', textAlign: 'center' }}>
-            Prototype · <Link to="/track/track-demo-active">open the demo guest tracking link</Link> · all data is fictional.
+            Prototype · all data is fictional · <Link to="/track/track-demo-active">open a sample tracking link</Link>.
           </p>
         </main>
       </div>
@@ -257,7 +278,7 @@ export function Logo({ size = 30 }: { size?: number }) {
 }
 
 function GuestLinkEntry() {
-  const [token, setToken] = useState('track-demo-active');
+  const [token, setToken] = useState('');
   const navigate = useNavigate();
   return (
     <form
@@ -271,7 +292,7 @@ function GuestLinkEntry() {
         Have a tracking link? (receiver / guest)
       </div>
       <div className="row">
-        <TextInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="tracking token" aria-label="Tracking token" />
+        <TextInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="e.g. from a sharing link" aria-label="Tracking token" />
         <Button variant="secondary" type="submit">Open</Button>
       </div>
     </form>

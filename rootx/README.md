@@ -15,10 +15,13 @@ rootx/
 │   │   │                 #   Pure, tested rules that the production API will
 │   │   │                 #   import as-is: state machine, safety hours, pricing,
 │   │   │                 #   matching, verification, zones/geofencing, ledger.
-│   │   └── *.test.ts     #   8 test files / 54 tests, incl. full-journey
+│   │   └── *.test.ts     #   8 test files / 56 tests, incl. full-journey
 │   ├── src/pages/        # customer, guest, rider, admin (ops/finance/security)
-│   ├── src/ds/           # design system (tokens + primitives)
-│   └── src/components/   # schematic campus map, timeline, demo controls
+│   ├── src/ds/           # design system (tokens + primitives, Campus Neon dark)
+│   └── src/components/   # Leaflet/OSM live map, timeline, network badge
+├── server/               # ★ Real API: Fastify + SQLite, sessions, SSE,
+│                         #   per-viewer redaction, server clock. The engine
+│                         #   runs HERE — the app is a networked mirror.
 ├── landing/              # 3D interactive marketing concept (see below)
 ├── database/
 │   ├── schema.sql        # authoritative PostgreSQL 15 + PostGIS DDL
@@ -44,44 +47,57 @@ npm run dev        # → http://localhost:5174 (the prototype app runs on 5173)
 
 ## Quick start (prototype)
 
-Requires Node 18+.
+Requires Node 22+ (the server uses `node:sqlite`). Two processes:
 
 ```bash
+# 1 — the API (owns state, clock, sessions, redaction)
+cd rootx/server
+npm install
+npm run dev        # → http://localhost:4000 (SQLite in server/data/)
+
+# 2 — the app (networked mirror: boot fetch + SSE + queued dispatch)
 cd rootx/app
 npm install
-npm run dev        # → http://localhost:5173 (binds 0.0.0.0)
+npm run dev        # → http://localhost:5173 (proxies /api → :4000)
 ```
+
+Sign in with phone + OTP — there is no SMS gateway in the prototype, so the
+6-digit code is shown in the app (returned only to the requester, redacted
+everywhere else; see `docs/19` D-13). The seeded accounts are also one tap
+away on the sign-in screen.
 
 Other commands:
 
 ```bash
-npm test           # 54 engine + journey tests (vitest)
+npm test           # 56 engine + journey tests (vitest)
 npm run build      # typecheck + production build
-npm run preview    # serve the production build
+node scripts/e2e.mjs   # (server/) full multi-user journey over real HTTP —
+                       # two human sessions, payment webhook, codes, settlement
 ```
 
-The prototype is self-contained: no backend, no keys, no network services. The
-engine runs client-side and the state persists in your browser (localStorage).
-
-### Demo accounts (quick login)
+### Accounts (seeded world)
 
 | Role | Account |
 |---|---|
-| Customer (sender) | Ada / Tunde / Chidi / Amaka |
-| Rider (verified, simulated) | Kofi / Ibrahim / Blessing |
+| Customer (sender) | Ada · Tunde · Amaka |
+| Rider (verified, human-driven) | Chidi |
 | Admin (ops) | Mrs. Bello |
 | Finance | Mr. Adeyemi |
 
-Use **Quick login** on the login screen. Staff roles require the MFA step (demo code shown on screen).
+Staff roles require MFA after OTP (prototype code shown on screen). **Riders are
+never simulated**: seeded demo riders are parked and ineligible; a delivery only
+moves when a real rider session (Chidi) accepts and drives it.
 
-### Things to try
+### Things to try (multi-tab, real sessions)
 
-- Book a delivery end-to-end (wizard → quote → pay → watch a simulated rider complete it with codes).
-- Open the **receiver link** in a private tab — then **revoke** it and refresh.
-- Use **Demo controls** (top bar) to toggle GPS loss (stale location rendering), offline mode, and forced payment failure — the UI never fakes success.
-- Advance the **clock** past 18:00 / 21:00 to see the safety phases (warning → booking cutoff → closure with active deliveries resolving safely).
-- In admin: approve a rider application, change pricing (rider-net preview included), propose a settlement batch as finance, approve it as admin.
+- Open **two browser profiles** (or a normal + private window): sign in as **Ada** (customer) in one and **Chidi** (rider) in the other.
+- As Ada: book a delivery (wizard → quote → pay by card) and watch it move to *finding a rider* when the gateway webhook confirms.
+- As Chidi: accept the offer, drive the run — approach, arrive, **ask Ada for her pickup code** (she reads it from her app), collect, transit, arrive, get the delivery code from the receiver link.
+- Open the **receiver link** in a third tab — live map, status timeline, delivery code — then **revoke** it as Ada and refresh.
+- Top up Ada's **wallet** (card or transfer — it credits when the webhook lands) and pay a delivery from it.
+- In admin: approve a rider application, change pricing (rider-net preview included), propose a settlement batch as finance, approve it as admin — two-person rule enforced by the server.
 - Raise an SOS as a rider and resolve it as admin — note there is no penalty path anywhere.
+- Kill the server and keep using the app: actions queue with an honest offline banner and replay when it returns (payments and code checks never fake success).
 
 ## The nine non-negotiables (implemented + tested)
 
@@ -113,4 +129,4 @@ Requires PostgreSQL 15+ with PostGIS. `schema.sql` is the consolidated view; mig
 
 ## Status
 
-Prototype complete and green (typecheck ✓ · 54/54 tests ✓ · build ✓). Production build-out follows the phase gates in `docs/20`.
+Prototype complete and green (typecheck ✓ · 56/56 engine tests ✓ · 37-check HTTP E2E ✓ · build ✓). Production build-out follows the phase gates in `docs/20`.

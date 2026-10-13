@@ -1,10 +1,37 @@
 import type { Zone, Landmark } from './types';
 
+/* ---- geographic projection -------------------------------------------------
+   The engine reasons in schematic units (1 unit = 10 m); the UI renders on a
+   real OpenStreetMap. The projection anchors the schematic grid onto Osogbo so
+   the campus zone lands on UNIOSUN Main Campus, Oke-Baale (7.7616 N, 4.6012 E).
+   Zone geometry remains configurable data — see docs/12-mapping.md. ---------- */
+
+/** NW corner of the schematic grid, chosen so grid (262, 210) = UNIOSUN campus. */
+export const GEO_ORIGIN = { lat: 7.7806, lng: 4.5774 };
+const M_PER_DEG_LAT = 110_574;
+const M_PER_DEG_LNG = 110_320; // 111320 × cos(7.78°)
+
+/** Schematic units → WGS84. x grows east, y grows south. */
+export function toLatLng(x: number, y: number): { lat: number; lng: number } {
+  return {
+    lat: GEO_ORIGIN.lat - (y * 10) / M_PER_DEG_LAT,
+    lng: GEO_ORIGIN.lng + (x * 10) / M_PER_DEG_LNG,
+  };
+}
+
+/** WGS84 → schematic units (inverse of toLatLng). */
+export function fromLatLng(lat: number, lng: number): { x: number; y: number } {
+  return {
+    x: ((lng - GEO_ORIGIN.lng) * M_PER_DEG_LNG) / 10,
+    y: ((GEO_ORIGIN.lat - lat) * M_PER_DEG_LAT) / 10,
+  };
+}
+
 /* ============================================================================
    ROOT-X service zones — SCHEMATIC DEMO GEOMETRY.
    ----------------------------------------------------------------------------
    ⚠ These are illustrative placeholders for the prototype, NOT approved
-   service boundaries. Coordinates use schematic map units (1 unit = 100 m)
+   service boundaries. Coordinates use schematic map units (1 unit = 10 m)
    around approximate campus locations. Before launch, each polygon must be
    surveyed, validated against GPS traces, and approved by the founder (and
    the university where required). See docs/11-mapping.md and

@@ -12,10 +12,9 @@ import {
   Scale,
   Tags,
 } from 'lucide-react';
-import { useRootX, useDispatchRootX, currentUser, serviceWindowNow } from '../../engine/store';
+import { useRootX, useDispatchRootX, useNet, currentUser, serviceWindowNow } from '../../engine/store';
 import { Avatar } from '../../ds';
 import { ServiceStatusChip } from '../../components/bits';
-import { DemoControls } from '../../components/DemoControls';
 import { Logo } from '../auth/Login';
 import { fmtNaira } from '../../engine/ledger';
 
@@ -58,7 +57,7 @@ export default function AdminShell() {
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
-            background: 'oklch(0.968 0.006 80)',
+            background: 'var(--surface-sunken)',
             position: 'sticky',
             top: 0,
             height: '100dvh',
@@ -115,7 +114,7 @@ export default function AdminShell() {
               position: 'sticky',
               top: 0,
               zIndex: 40,
-              background: 'oklch(0.978 0.005 80 / 0.88)',
+              background: 'oklch(0.185 0.028 258 / 0.88)',
               backdropFilter: 'blur(12px)',
               borderBottom: '1px solid var(--line-subtle)',
               padding: '10px 22px',
@@ -141,7 +140,6 @@ export default function AdminShell() {
           </main>
         </div>
       </div>
-      <DemoControls />
     </div>
   );
 }

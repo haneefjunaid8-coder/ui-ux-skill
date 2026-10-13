@@ -342,6 +342,19 @@ export interface SettlementBatch {
   approvedById: string | null;
 }
 
+/* ---- wallet top-ups (gateway lifecycle, credited by webhook) ------------------ */
+
+export interface TopUp {
+  id: string;
+  userId: string;
+  amount: number;
+  method: 'card' | 'transfer';
+  status: 'processing' | 'succeeded' | 'failed';
+  gatewayRef: string;
+  idempotencyKey: string;
+  events: { at: number; status: string; note: string }[];
+}
+
 /* ---- configuration (admin-managed, versioned, audited) --------------------- */
 
 export interface PricingConfig {

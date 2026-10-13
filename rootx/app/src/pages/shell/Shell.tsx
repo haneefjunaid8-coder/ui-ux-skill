@@ -1,10 +1,9 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Bell, ChevronDown, History, LayoutGrid, LogOut, Package, Plus, Star, User, Wallet, Home as HomeIcon } from 'lucide-react';
-import { useRootX, useDispatchRootX, currentUser, unreadCount, serviceWindowNow } from '../../engine/store';
+import { useRootX, useDispatchRootX, useNet, currentUser, unreadCount, serviceWindowNow } from '../../engine/store';
 import { Avatar, Banner, IconButton, type IconType } from '../../ds';
 import { ServiceStatusChip } from '../../components/bits';
-import { DemoControls } from '../../components/DemoControls';
 import { Logo } from '../auth/Login';
 
 /* ============================================================================
@@ -16,6 +15,7 @@ export default function Shell() {
   const state = useRootX();
   const dispatch = useDispatchRootX();
   const navigate = useNavigate();
+  const net = useNet();
   const user = currentUser(state)!;
   const isRider = user.role === 'rider';
   const unread = unreadCount(state, user.id);
@@ -43,7 +43,7 @@ export default function Shell() {
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          background: 'oklch(0.978 0.005 80 / 0.88)',
+          background: 'oklch(0.185 0.028 258 / 0.88)',
           backdropFilter: 'blur(14px) saturate(1.5)',
           borderBottom: '1px solid var(--line-subtle)',
         }}
@@ -78,6 +78,7 @@ export default function Shell() {
                 {unread}
               </span>
             )}
+            <NetBadge />
             <AccountMenu name={user.name} onLogout={() => dispatch({ type: 'auth/logout' })} />
           </div>
         </div>
@@ -111,14 +112,14 @@ export default function Shell() {
         `}</style>
       </header>
 
-      {state.demo.offline && (
+      {!net.online && (
         <div style={{ padding: '0 12px', maxWidth: 880, marginInline: 'auto', width: '100%', marginTop: 10 }}>
           <Banner tone="warn" title="You're offline">
             You can keep working — safe status updates are queued and will sync when the connection returns. Payments and
             verification always wait for confirmation; nothing is assumed.
-            {state.networkQueue.length > 0 && (
+            {net.queued > 0 && (
               <span className="mono" style={{ display: 'block', marginTop: 4 }}>
-                {state.networkQueue.length} update(s) queued
+                {net.queued} update(s) queued
               </span>
             )}
           </Banner>
@@ -139,7 +140,7 @@ export default function Shell() {
           bottom: 0,
           left: 0,
           right: 0,
-          background: 'oklch(0.995 0.004 80 / 0.94)',
+          background: 'oklch(0.205 0.032 258 / 0.94)',
           backdropFilter: 'blur(14px)',
           borderTop: '1px solid var(--line-subtle)',
           display: 'flex',
@@ -167,7 +168,7 @@ export default function Shell() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 6px 18px oklch(0.45 0.11 150 / 0.4)',
+                boxShadow: '0 6px 18px oklch(0.72 0.17 300 / 0.35)',
                 border: '3px solid var(--surface)',
                 textDecoration: 'none',
               }}
@@ -180,7 +181,6 @@ export default function Shell() {
         )}
       </nav>
 
-      <DemoControls />
     </div>
   );
 }
@@ -213,6 +213,8 @@ function BottomItem({ to, label, icon: Icon, end }: { to: string; label: string;
 function AccountMenu({ name, onLogout }: { name: string; onLogout: () => void }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
+  const dispatch = useDispatchRootX();
+  const navigate = useNavigate();
   React.useEffect(() => {
     const onDoc = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -237,17 +239,58 @@ function AccountMenu({ name, onLogout }: { name: string; onLogout: () => void })
             borderRadius: 'var(--r-md)',
             boxShadow: 'var(--shadow-lg)',
             padding: 6,
-            minWidth: 180,
+            minWidth: 230,
             zIndex: 80,
           }}
         >
           <div style={{ padding: '8px 10px', fontSize: 'var(--text-sm)', fontWeight: 700 }}>{name}</div>
+          <div style={{ padding: '8px 10px 4px', fontSize: 'var(--text-2xs)', fontWeight: 700, letterSpacing: 'var(--tracking-wider)', textTransform: 'uppercase', color: 'var(--ink-3)' }}>
+            Switch account
+          </div>
+          {DEMO_ACCOUNTS.map((a) => (
+            <button
+              key={a.id}
+              className="btn btn-ghost btn-sm btn-block"
+              style={{ justifyContent: 'flex-start', fontWeight: a.name === name ? 700 : 500 }}
+              role="menuitem"
+              onClick={() => {
+                dispatch({ type: 'auth/quickLogin', userId: a.id });
+                setOpen(false);
+                navigate('/');
+              }}
+            >
+              <Avatar name={a.name} size={22} /> {a.name}
+              <span className="muted" style={{ fontSize: 'var(--text-2xs)', marginLeft: 'auto' }}>{a.role}</span>
+            </button>
+          ))}
+          <div style={{ height: 1, background: 'var(--line)', margin: '6px 4px' }} />
           <button className="btn btn-ghost btn-sm btn-block" style={{ justifyContent: 'flex-start' }} role="menuitem" onClick={onLogout}>
             <LogOut size={15} /> Sign out
           </button>
         </div>
       )}
     </div>
+  );
+}
+
+const DEMO_ACCOUNTS = [
+  { id: 'u-ada', name: 'Ada Obi', role: 'Customer' },
+  { id: 'u-tunde', name: 'Tunde Bakare', role: 'Customer' },
+  { id: 'u-chidi', name: 'Chidi Okafor', role: 'Rider' },
+  { id: 'u-amaka', name: 'Amaka Eze', role: 'Applicant' },
+  { id: 'u-admin', name: 'Mrs. Bello', role: 'Admin' },
+  { id: 'u-finance', name: 'Mr. Adeyemi', role: 'Finance' },
+];
+
+/** Honest connectivity indicator: offline state and queued actions are shown,
+ *  never hidden (constraint C-8). */
+function NetBadge() {
+  const net = useNet();
+  if (net.online && net.queued === 0) return null;
+  return (
+    <span className="pill" style={{ background: 'var(--status-wait-bg)', color: 'var(--status-wait-fg)', fontSize: 'var(--text-2xs)', fontWeight: 700 }}>
+      {net.online ? `Syncing ${net.queued}…` : 'Offline — will retry'}
+    </span>
   );
 }
 
