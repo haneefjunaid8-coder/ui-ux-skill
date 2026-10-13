@@ -7,8 +7,11 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/ds.css';
 import { RootXProvider } from './engine/store';
+import { registerPwa } from './pwa';
 import { ToastProvider } from './ds';
 import App from './App';
+
+registerPwa();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

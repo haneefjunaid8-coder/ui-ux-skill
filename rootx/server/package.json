@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "ROOT-X API server \u2014 hosts the rules engine (imported from ../app/src/engine/core), real sessions, multi-user SSE sync, SQLite persistence. Demo gateway simulation only; no real payments.",
+  "description": "ROOT-X API server — hosts the rules engine (imported from ../app/src/engine/core), real sessions, multi-user SSE sync, SQLite persistence. Demo gateway simulation only; no real payments.",
   "scripts": {
     "dev": "NODE_OPTIONS=--experimental-sqlite tsx watch src/index.ts",
     "start": "NODE_OPTIONS=--experimental-sqlite tsx src/index.ts",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.1",
+    "@fastify/static": "^10.1.6",
     "fastify": "^5.2.1"
   },
   "devDependencies": {

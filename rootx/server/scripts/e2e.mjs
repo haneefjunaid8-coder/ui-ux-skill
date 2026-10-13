@@ -225,5 +225,23 @@ const admin = new Session('admin');
   check('bogus token 404s', r2.status === 404);
 }
 
+/* 6 — compiled PWA shell (same origin as the API — installable) */
+{
+  const r1 = await fetch(BASE + '/');
+  const html = await r1.text();
+  check('app shell served at /', r1.status === 200 && html.includes('<div id="root">'));
+  check('shell links the manifest + theme colour', html.includes('rel="manifest"') && html.includes('theme-color'));
+  const r2 = await fetch(BASE + '/login');
+  check('SPA deep links serve the shell', r2.status === 200 && (await r2.text()).includes('<div id="root">'));
+  const r3 = await fetch(BASE + '/manifest.webmanifest');
+  const man = await r3.json().catch(() => null);
+  check('manifest valid: standalone + icons', !!man && man.display === 'standalone' && Array.isArray(man.icons) && man.icons.length >= 2);
+  const r4 = await fetch(BASE + '/sw.js');
+  const sw = await r4.text();
+  check('service worker served at root scope', r4.status === 200 && sw.includes('rootx-shell'));
+  const r5 = await fetch(BASE + '/api/definitely-not-a-route');
+  check('API 404s stay JSON (not the SPA shell)', r5.status === 404 && (r5.headers.get('content-type') || '').includes('json'));
+}
+
 console.log(failures === 0 ? '\nE2E PASS — fully functional, human-driven, server-authoritative' : `\nE2E FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

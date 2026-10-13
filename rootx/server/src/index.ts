@@ -1,5 +1,7 @@
 import Fastify from 'fastify';
 import cookie from '@fastify/cookie';
+import fastifyStatic from '@fastify/static';
+import { existsSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { randomBytes } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
@@ -339,6 +341,37 @@ const api = async () => {
 };
 void api();
 
+/* ---- compiled app (PWA) -------------------------------------------------------- */
+/* Serves ../app/dist when it exists: one origin serves the installed app and
+ * its API. /api routes always win (registered paths); everything else falls
+ * through to files, and unknown paths get the SPA shell — except /api misses,
+ * which stay JSON 404s. */
+const DIST = join(__dirname, '..', '..', 'app', 'dist');
+if (existsSync(DIST)) {
+  app.get('/sw.js', (_req, reply) => {
+    reply.header('cache-control', 'no-cache').sendFile('sw.js');
+  });
+  app.get('/manifest.webmanifest', (_req, reply) => {
+    reply.header('content-type', 'application/manifest+json').header('cache-control', 'no-cache').sendFile('manifest.webmanifest');
+  });
+  void app.register(fastifyStatic, {
+    root: DIST,
+    prefix: '/',
+    cacheControl: false,
+  });
+  // SPA fallback: missed paths (deep links like /login, /track/…) get the
+  // shell; /api misses stay JSON 404s.
+  app.setNotFoundHandler((req, reply) => {
+    if (req.url.startsWith('/api/') || (req.method !== 'GET' && req.method !== 'HEAD')) {
+      return reply.code(404).send({ error: 'not found' });
+    }
+    reply.header('cache-control', 'no-cache').sendFile('index.html');
+  });
+  console.log(`app shell: ${DIST}`);
+} else {
+  console.log('app shell: not built (run npm run build in ../app) — serving API only');
+}
+
 /* ---- server clock ------------------------------------------------------------ */
 
 setInterval(() => {
@@ -367,5 +400,5 @@ for (const sig of ['SIGINT', 'SIGTERM'] as const) {
 }
 
 app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
-  console.log(`ROOT-X API on :${PORT} · riders:human-driven · persistence: SQLite (${join(DATA_DIR, 'rootx.db')})`);
+  console.log(`ROOT-X on :${PORT} · app: ${existsSync(DIST) ? 'compiled PWA' : 'API only'} · riders:human-driven · persistence: SQLite (${join(DATA_DIR, 'rootx.db')})`);
 });

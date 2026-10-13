@@ -31,6 +31,22 @@ model instead of simulating it (`docs/19` D-12):
 - **Server clock** — 1 Hz ticks run the gateway webhooks (payments, wallet
   top-ups), matching, safety-hours crossings and ledger transitions.
 
+## Compiled app (installable PWA)
+
+When `../app/dist` exists (run `npm run build` in `rootx/app`), this server
+also serves the compiled app **from the same origin** as the API — one URL for
+the installable PWA and its backend (cookies, SSE and the service worker all
+work without any proxy):
+
+- `GET /` and any non-API path → the SPA shell (`index.html`); deep links like `/login` and `/track/:token` serve the shell too.
+- `GET /assets/*` — hashed, immutable bundles. `GET /sw.js`, `/manifest.webmanifest` — served `no-cache` so deploys land.
+- `GET /api/*` misses stay JSON 404s — never the SPA shell.
+
+The service worker (`app/public/sw.js`) follows the honesty rules: API
+responses are never cached or fabricated offline; only the shell, static
+assets and basemap tiles are cached. Install it from your phone's browser
+(Android: *Install app*; iOS: *Add to Home Screen*).
+
 ## Endpoints
 
 | Method | Path | Purpose |

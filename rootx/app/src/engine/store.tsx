@@ -80,15 +80,24 @@ export function RootXProvider({ children }: { children: React.ReactNode }) {
     [flush],
   );
 
-  // boot: fetch current state, then subscribe to the live stream
+  // boot: fetch current state, then subscribe to the live stream. The boot
+  // fetch is retried while offline so an installed PWA opened without a
+  // connection still comes up the moment the network returns.
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/state', { credentials: 'include' })
-      .then((r) => r.json() as Promise<{ state: AppState }>)
-      .then((d) => {
-        if (!cancelled) setState(d.state);
-      })
-      .catch(() => setOnline(false));
+    const boot = () => {
+      fetch('/api/state', { credentials: 'include' })
+        .then((r) => r.json() as Promise<{ state: AppState }>)
+        .then((d) => {
+          if (!cancelled && d.state) {
+            stateRef.current = d.state;
+            setState(d.state);
+            setOnline(true);
+          }
+        })
+        .catch(() => setOnline(false));
+    };
+    boot();
 
     const es = new EventSource('/api/events');
     es.onmessage = (e) => {
@@ -96,10 +105,16 @@ export function RootXProvider({ children }: { children: React.ReactNode }) {
       if (msg.type === 'state') setState(msg.state);
       else if (msg.type === 'clock') setState((s) => (s ? { ...s, clock: { ...s.clock, epoch: msg.epoch } } : s));
     };
-    es.onopen = () => setOnline(true);
+    es.onopen = () => {
+      setOnline(true);
+      if (!stateRef.current) boot(); // stream is back but the shell never loaded
+    };
     es.onerror = () => setOnline(false); // EventSource auto-reconnects
     // when the stream returns, drain any queued actions
-    const drain = setInterval(() => void flush(), 4000);
+    const drain = setInterval(() => {
+      if (!stateRef.current) boot();
+      else void flush();
+    }, 4000);
     return () => {
       cancelled = true;
       es.close();
@@ -109,12 +124,16 @@ export function RootXProvider({ children }: { children: React.ReactNode }) {
 
   const net = useRef({ online, queued });
   net.current = { online, queued };
+  const stateRef = useRef<AppState | null>(null);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   if (state === null) {
     return (
       <div className="boot-splash" role="status" aria-label="Connecting to ROOT-X">
         <div className="boot-orb" aria-hidden />
-        <p>Connecting to ROOT-X…</p>
+        <p>{online ? 'Connecting to ROOT-X…' : 'You’re offline — ROOT-X will reconnect when the network returns.'}</p>
       </div>
     );
   }

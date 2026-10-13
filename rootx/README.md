@@ -47,19 +47,36 @@ npm run dev        # → http://localhost:5174 (the prototype app runs on 5173)
 
 ## Quick start (prototype)
 
-Requires Node 22+ (the server uses `node:sqlite`). Two processes:
+Requires Node 22+ (the server uses `node:sqlite`). Build the app once, then
+run the server — it serves **the compiled, installable PWA and the API from
+one origin**:
 
 ```bash
-# 1 — the API (owns state, clock, sessions, redaction)
-cd rootx/server
-npm install
-npm run dev        # → http://localhost:4000 (SQLite in server/data/)
-
-# 2 — the app (networked mirror: boot fetch + SSE + queued dispatch)
+# 1 — compile the app (typecheck + production build → app/dist)
 cd rootx/app
 npm install
-npm run dev        # → http://localhost:5173 (proxies /api → :4000)
+npm run build
+
+# 2 — the server: API + app shell on one origin
+cd ../server
+npm install
+npm run dev        # → http://localhost:4000  (open this — it's the app)
 ```
+
+For hot-reload development instead: `npm run dev` in `rootx/app`
+(→ http://localhost:5173, proxies `/api` → :4000).
+
+### Install it on your phone (PWA)
+
+Open the server's URL on your phone and install ROOT-X like a native app:
+
+- **Android / Chrome** — tap **Install app** in the address bar (or ⋮ → *Add to Home screen*).
+- **iPhone / Safari** — Share → **Add to Home Screen**.
+
+You get a standalone window, the ROOT-X icon (Campus Neon dark mark), and an
+app that keeps working offline: the shell and map tiles are cached by the
+service worker, actions queue honestly and replay when the connection returns,
+and payments/verification always wait for the server — nothing is faked.
 
 Sign in with phone + OTP — there is no SMS gateway in the prototype, so the
 6-digit code is shown in the app (returned only to the requester, redacted
