@@ -19,12 +19,27 @@ rootx/
 │   ├── src/pages/        # customer, guest, rider, admin (ops/finance/security)
 │   ├── src/ds/           # design system (tokens + primitives)
 │   └── src/components/   # schematic campus map, timeline, demo controls
+├── landing/              # 3D interactive marketing concept (see below)
 ├── database/
 │   ├── schema.sql        # authoritative PostgreSQL 15 + PostGIS DDL
 │   └── migrations/       # forward-only, dependency-ordered migrations
 ├── api/
 │   └── openapi.yaml      # OpenAPI 3.1 specification
 └── docs/                 # 20 deliverables — see docs/README.md
+```
+
+### Landing concept (`landing/`)
+
+A 3D interactive marketing page generated with the
+[`modern-3d-uiux-gpt3` skill](../modern-3d-uiux-gpt3-skill/) (GPT-3-style dark
+gradient design language + WebGL). It is a **design exploration** — brand and
+copy are exploratory per `docs/19` A-2, and the page carries the required
+no-affiliation disclaimer.
+
+```bash
+cd rootx/landing
+npm install
+npm run dev        # → http://localhost:5174 (the prototype app runs on 5173)
 ```
 
 ## Quick start (prototype)
