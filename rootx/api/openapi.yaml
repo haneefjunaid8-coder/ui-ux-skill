@@ -1,0 +1,594 @@
+openapi: 3.1.0
+info:
+  title: ROOT-X API
+  version: 0.1.0
+  description: >
+    Campus delivery, logistics and student-rider platform for UNIOSUN.
+    All business rules (state transitions, safety hours, zone eligibility,
+    verification lockouts, money invariants) are enforced server-side in a
+    shared rules layer; clients are untrusted. Money is integer kobo.
+    Placeholder server URL — no deployment is final (see docs/19).
+servers:
+  - url: https://api.rootx.example/v1
+tags:
+  - name: auth
+  - name: deliveries
+  - name: guest
+  - name: rider
+  - name: admin
+  - name: webhooks
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/otp/request:
+    post:
+      tags: [auth]
+      summary: Request an OTP for a phone number
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone: { type: string, example: "08031110001" }
+                registering:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    zone_id: { type: string }
+      responses:
+        "202": { description: OTP sent (or silently rate-limited) }
+        "429": { $ref: "#/components/responses/Problem" }
+
+  /auth/otp/verify:
+    post:
+      tags: [auth]
+      summary: Verify OTP; admin/finance receive mfa_required
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string, example: "483920" }
+      responses:
+        "200":
+          description: Session (or MFA gate)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/TokenPair"
+                  - $ref: "#/components/schemas/MfaRequired"
+        "423": { description: OTP locked (too many attempts) }
+
+  /deliveries/quote:
+    post:
+      tags: [deliveries]
+      summary: Price and eligibility quote (no side effects)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/QuoteRequest" }
+      responses:
+        "200":
+          description: Quote or refusal with reason
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/QuoteResponse" }
+
+  /deliveries:
+    post:
+      tags: [deliveries]
+      summary: Create a delivery (rules-validated server-side)
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DeliveryCreate" }
+      responses:
+        "201":
+          description: Created (awaiting_payment)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Delivery" }
+        "422": { $ref: "#/components/responses/Problem" }
+    get:
+      tags: [deliveries]
+      summary: List my deliveries
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: kind
+          schema: { type: string, enum: [immediate, scheduled, recurring] }
+      responses:
+        "200":
+          description: Deliveries
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Delivery" }
+
+  /deliveries/{id}/pay:
+    post:
+      tags: [deliveries]
+      summary: Start payment (never marks succeeded — webhook only)
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/DeliveryId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [method]
+              properties:
+                method: { type: string, enum: [card, transfer, wallet] }
+      responses:
+        "202":
+          description: payment_processing until verified webhook
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Delivery" }
+
+  /deliveries/{id}/cancel:
+    post:
+      tags: [deliveries]
+      summary: Cancel with fee-stage preview applied; safety reasons waive fees
+      parameters:
+        - $ref: "#/components/parameters/DeliveryId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, example: "No longer needed" }
+      responses:
+        "200":
+          description: Cancelled with refund summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Delivery" }
+
+  /deliveries/{id}/tracking/rotate:
+    post:
+      tags: [deliveries]
+      summary: Issue a fresh guest tracking token (old one dies)
+      parameters:
+        - $ref: "#/components/parameters/DeliveryId"
+      responses:
+        "200":
+          description: New link
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string }
+                  expires_at: { type: string, format: date-time }
+
+  /deliveries/{id}/tracking/revoke:
+    post:
+      tags: [deliveries]
+      summary: Revoke the guest tracking link immediately
+      parameters:
+        - $ref: "#/components/parameters/DeliveryId"
+      responses:
+        "204": { description: Revoked }
+
+  /track/{token}:
+    get:
+      tags: [guest]
+      summary: Guest tracking view (no auth; no personal data; 404 when revoked/expired)
+      security: []
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Delivery-scoped view
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GuestView" }
+        "404": { $ref: "#/components/responses/Problem" }
+
+  /rider/applications:
+    post:
+      tags: [rider]
+      summary: Apply as a student rider (C-1 — manual approval required)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RiderApplication" }
+      responses:
+        "201":
+          description: Submitted — under review; never eligible until approved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RiderApplication" }
+
+  /rider/offers/{deliveryId}/accept:
+    post:
+      tags: [rider]
+      summary: Accept an offer (single-assignment guarded)
+      parameters:
+        - $ref: "#/components/parameters/DeliveryId"
+      responses:
+        "200": { description: Assigned }
+        "409": { $ref: "#/components/responses/Problem" }
+
+  /rider/offers/{deliveryId}/decline:
+    post:
+      tags: [rider]
+      summary: Decline an offer — never penalised
+      parameters:
+        - $ref: "#/components/parameters/DeliveryId"
+      responses:
+        "204": { description: Declined }
+
+  /rider/deliveries/{id}/code:
+    post:
+      tags: [rider]
+      summary: Submit pickup/delivery code (attempts counted; lockout enforced)
+      parameters:
+        - $ref: "#/components/parameters/DeliveryId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, code]
+              properties:
+                kind: { type: string, enum: [pickup, delivery] }
+                code: { type: string, example: "4729" }
+      responses:
+        "200":
+          description: ok | wrong | locked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result: { type: string, enum: [ok, wrong, locked] }
+                  lockout_until: { type: string, format: date-time }
+
+  /rider/sos:
+    post:
+      tags: [rider]
+      summary: Raise a safety SOS — always available, 24/7 (C-3)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, note]
+              properties:
+                kind: { type: string, enum: [sos, harassment, accident, unsafe_area, other] }
+                note: { type: string }
+                delivery_id: { type: string, format: uuid }
+      responses:
+        "201": { description: Incident opened }
+
+  /admin/applications/{id}/decision:
+    post:
+      tags: [admin]
+      summary: Approve/reject a rider application (note required; audit-logged)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision, note]
+              properties:
+                decision: { type: string, enum: [approved, rejected] }
+                note: { type: string }
+      responses:
+        "200": { description: Decision recorded }
+        "403": { $ref: "#/components/responses/Problem" }
+
+  /admin/finance/settlement-runs:
+    post:
+      tags: [admin]
+      summary: Finance proposes a settlement batch from ready ledgers
+      responses:
+        "201":
+          description: Batch awaiting admin approval (two-person rule)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SettlementBatch" }
+        "403": { $ref: "#/components/responses/Problem" }
+
+  /admin/finance/settlements/{id}/approve:
+    post:
+      tags: [admin]
+      summary: Admin approves a settlement batch (cannot be the proposer)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Approved }
+        "403": { $ref: "#/components/responses/Problem" }
+
+  /admin/cases/disputes/{id}/resolve:
+    post:
+      tags: [admin]
+      summary: Resolve a dispute (outcome, refund split, note required)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outcome, refund_amount_kobo, from_rider_share, note]
+              properties:
+                outcome: { type: string }
+                refund_amount_kobo: { type: integer }
+                from_rider_share: { type: boolean }
+                note: { type: string }
+      responses:
+        "200": { description: Resolved with ledger adjustment }
+
+  /webhooks/payments:
+    post:
+      tags: [webhooks]
+      summary: Payment gateway callback (signature-verified; idempotent; only success path)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idempotency_key: { type: string }
+                status: { type: string, enum: [succeeded, failed] }
+                gateway_ref: { type: string }
+      responses:
+        "200": { description: Acknowledged (idempotent) }
+
+components:
+  parameters:
+    DeliveryId:
+      in: path
+      name: id
+      required: true
+      schema: { type: string }
+    IdempotencyKey:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema: { type: string }
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Problem:
+      description: Error (RFC 9457 problem+json)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Problem" }
+
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        errors: { type: object }
+
+    TokenPair:
+      type: object
+      properties:
+        access_token: { type: string }
+        refresh_token: { type: string }
+        user: { $ref: "#/components/schemas/User" }
+
+    MfaRequired:
+      type: object
+      properties:
+        mfa_required: { type: boolean, const: true }
+
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        role: { type: string, enum: [customer, rider, admin, finance, security] }
+        zone_id: { type: string }
+        wallet_balance_kobo: { type: integer }
+
+    QuoteRequest:
+      type: object
+      required: [stops, package, transport, timing]
+      properties:
+        stops:
+          type: array
+          minItems: 2
+          items: { $ref: "#/components/schemas/Stop" }
+        package: { $ref: "#/components/schemas/Package" }
+        transport: { type: string, enum: [foot, bicycle, motorcycle] }
+        timing:
+          type: object
+          required: [kind]
+          properties:
+            kind: { type: string, enum: [immediate, scheduled, recurring] }
+            scheduled_for: { type: string, format: date-time }
+            recurrence: { $ref: "#/components/schemas/Recurrence" }
+
+    Stop:
+      type: object
+      required: [kind, label, lat, lng, zone_id]
+      properties:
+        kind: { type: string, enum: [pickup, dropoff] }
+        label: { type: string }
+        landmark_id: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+        zone_id: { type: string }
+        receiver:
+          type: object
+          properties:
+            name: { type: string }
+            phone: { type: string }
+
+    Package:
+      type: object
+      required: [description, category, quantity, weight_kg, dimensions_cm, photos, contents_declared]
+      properties:
+        description: { type: string }
+        category:
+          type: string
+          enum: [documents, books, food, groceries, clothing, electronics, pharmacy, business_stock, other]
+        quantity: { type: integer, minimum: 1 }
+        weight_kg: { type: number, maximum: 30 }
+        dimensions_cm:
+          type: object
+          properties:
+            l: { type: integer }
+            w: { type: integer }
+            h: { type: integer }
+        photos: { type: array, items: { type: string } }
+        contents_declared: { type: boolean }
+        fragile: { type: boolean }
+        food: { type: boolean }
+        declared_value_kobo: { type: integer, nullable: true }
+        handling_notes: { type: string }
+
+    Recurrence:
+      type: object
+      required: [days, time]
+      properties:
+        days: { type: array, items: { type: integer, minimum: 0, maximum: 6 } }
+        time: { type: string, example: "08:30" }
+
+    QuoteResponse:
+      type: object
+      properties:
+        eligible: { type: boolean }
+        reason: { type: string }
+        lines:
+          type: array
+          items:
+            type: object
+            properties:
+              key: { type: string }
+              label: { type: string }
+              amount_kobo: { type: integer }
+        total_kobo: { type: integer }
+        distance_km: { type: number }
+        eta_minutes: { type: integer }
+        config_version: { type: integer }
+
+    DeliveryCreate:
+      allOf:
+        - $ref: "#/components/schemas/QuoteRequest"
+
+    Delivery:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        ref: { type: string, example: "RX-0123" }
+        status:
+          type: string
+          enum: [draft, awaiting_payment, payment_processing, awaiting_rider,
+                 offered_to_riders, rider_assigned, rider_approaching_pickup, at_pickup,
+                 pickup_verification_pending, package_collected, in_transit,
+                 approaching_destination, delivery_verification_pending, delivered,
+                 cancellation_requested, cancelled, return_required, disputed, under_review]
+        kind: { type: string, enum: [immediate, scheduled, recurring] }
+        quote: { $ref: "#/components/schemas/QuoteResponse" }
+        payment:
+          type: object
+          properties:
+            status: { type: string, enum: [initiated, processing, succeeded, failed] }
+            amount_kobo: { type: integer }
+        tracking_url: { type: string }
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              status: { type: string }
+              at: { type: string, format: date-time }
+              actor: { type: string }
+
+    GuestView:
+      type: object
+      description: Minimal delivery-scoped view — no personal data
+      properties:
+        status: { type: string }
+        eta_minutes: { type: integer, nullable: true }
+        rider_first_name: { type: string }
+        rider_last_initial: { type: string }
+        last_updated_at: { type: string, format: date-time, nullable: true }
+        stale: { type: boolean }
+        expires_at: { type: string, format: date-time }
+
+    RiderApplication:
+      type: object
+      required: [full_name, matric_number, student_id_doc_ref, phone, emergency_contact, transport, zone_id, terms_accepted]
+      properties:
+        full_name: { type: string }
+        matric_number: { type: string }
+        student_id_doc_ref: { type: string, description: private object-store ref }
+        phone: { type: string }
+        emergency_contact:
+          type: object
+          properties:
+            name: { type: string }
+            phone: { type: string }
+            relationship: { type: string }
+        transport: { type: string, enum: [foot, bicycle, motorcycle] }
+        zone_id: { type: string }
+        terms_accepted: { type: boolean }
+        status: { type: string, enum: [draft, submitted, approved, rejected] }
+
+    SettlementBatch:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        created_by: { type: string, format: uuid }
+        amount_kobo: { type: integer }
+        status: { type: string, enum: [awaiting_approval, approved, rejected] }
+        approved_by: { type: string, format: uuid, nullable: true }
