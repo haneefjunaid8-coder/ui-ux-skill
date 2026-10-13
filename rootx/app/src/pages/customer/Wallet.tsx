@@ -67,7 +67,7 @@ export default function WalletPage() {
           ₦{user.walletBalance.toLocaleString('en-NG')}
         </div>
         <div className="row" style={{ gap: 8 }}>
-          <Button variant="secondary" size="sm" icon={Plus} onClick={() => setTopUp(true)} style={{ background: 'oklch(1 0 0 / 0.08)', borderColor: 'oklch(1 0 0 / 0.18)', color: 'var(--ink)' }}>
+          <Button variant="secondary" size="sm" icon={Plus} onClick={() => setTopUp(true)} style={{ background: 'oklch(1 0 0 / 0.1)', borderColor: 'oklch(1 0 0 / 0.2)', color: 'white' }}>
             Top up
           </Button>
           <Button variant="ghost" size="sm" icon={Download} onClick={downloadStatement} style={{ color: 'white' }}>

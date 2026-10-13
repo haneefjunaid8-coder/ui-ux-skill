@@ -10,28 +10,27 @@ The design system is code: `rootx/app/src/ds/` (tokens, primitives) + `rootx/app
 4. **Money is transparent** — every naira shown with its reason (line items, net vs gross).
 5. **Editable identity** — all brand values are tokens; nothing visual is hard-coded.
 
-## 2. Color tokens — "Campus Neon" dark identity
+## 2. Color tokens — "Campus Day" clean light identity
 
-The app is **dark everywhere** (`color-scheme: dark`), matching the marketing landing's design language. The palette is a night-time campus: deep navy canvas, violet primary with an amber gradient accent, high-contrast ink.
+The product is **light everywhere** (`color-scheme: light`): white surfaces on a whisper-grey canvas, slate ink, ONE violet accent, green success — the clean, trustworthy register of Nigerian consumer fintech. No gradients on chrome, no glow; soft neutral shadows and crisp 1px borders. (The marketing landing keeps its own dark 3D language — marketing and product are different objects.)
 
 ```css
---root-50 … --root-900   /* primary ramp — violet (≈ #AE67FA at 400) */
---earth-50 … --earth-900 /* canvas/structure ramp — deep navy (≈ #040C18 at 50) */
---dusk-*                 /* amber — safety hours, warm accents */
---adire-*                /* blue — info, selected states */
---grad-accent            /* linear-gradient(103deg, #ae67fa → #f49867) — primary buttons, key highlights */
---grad-text              /* gradient text treatment for display numbers/headline emphasis */
---ink-1 … --ink-3        /* text ramp (AA contrast on dark surfaces) */
---bg, --surface, --surface-2
+--root-50 … --root-950   /* the ONE accent — violet (≈ #5B2EDD at 600) */
+--earth-50 … --earth-950 /* neutral slate — 50 = canvas, 950 = ink */
+--dusk-*                 /* amber — RESERVED for safety hours */
+--adire-*                /* blue — info / in-motion */
+--grad-accent            /* near-solid violet — hero treatments only */
+--ink, --ink-2 … --ink-4 /* text ramp (AA on white) */
+--canvas, --surface, --surface-inset
 --line, --line-subtle, --line-strong
---ok / --warn / --danger / --info (+ -bg)
+--status-go/-motion/-wait/-hold/-alert (+ -bg/-fg)  /* green/blue/amber/slate/red */
 --focus                  /* violet focus ring — never removed */
---shadow-*, --glow-accent /* elevation via glow, not grey drop shadows */
+--shadow-sm|md|lg|raise  /* soft neutral shadows, no glow */
 ```
 
-Statuses map to semantics, not colors: `success` → ok, `hold/warn` → warn, `error` → danger, `default/info` → info. The primary ramp is the only brand-dependent ramp; swapping it re-themes the whole product without touching components. Ambient depth comes from radial glows on the body (`base.css`), not decoration shadows.
+Statuses map to semantics, not colors: `success` → ok, `hold/warn` → warn, `error` → danger, `default/info` → info. The primary ramp is the only brand-dependent ramp; swapping it re-themes the whole product without touching components. Ambient depth comes from a whisper of violet at the top of the canvas (`base.css`) and soft neutral shadows — nothing louder.
 
-**Accessibility:** body text tokens meet WCAG AA (4.5:1) on their surfaces; large text and UI glyphs meet 3:1; `prefers-contrast: more` raises canvas/surface lightness. Focus ring is always visible on interactive elements. `prefers-reduced-motion` disables the boot orb, pin pulses and marker animations.
+**Accessibility:** body text tokens meet WCAG AA (4.5:1) on white; large text and UI glyphs meet 3:1; `prefers-contrast: more` darkens borders and secondary ink. Focus ring is always visible on interactive elements. `prefers-reduced-motion` disables the boot orb, pin pulses and marker animations.
 
 ## 3. Typography
 
@@ -80,7 +79,9 @@ Only functional motion: 150–250 ms ease-out for overlays and toasts; no parall
 
 ## 8. Brand identity — decision record
 
-**2026-10-13 — deliberate founder decision (resolves the palette half of `docs/19` A-2):** the whole product adopts the landing page's dark design language as the working visual identity — "Campus Neon": dark navy canvas (`--earth`), violet primary (`--root`), amber gradient accent (`--grad-accent`), Manrope/JetBrains Mono, glow-based elevation. This was chosen deliberately (per the founding-brief rule that brand values may not ship without a decision) and is recorded here and in `docs/19` D-11. It remains revisitable like every D-* decision.
+**2026-10-13 (rev 2, current) — deliberate founder decision:** the product moves to a **clean light identity — "Campus Day"**: white surfaces, slate ink, one violet accent, green success, soft shadows, no gradients/glow. This supersedes rev 1 below after founder review of the running app, and is recorded here and in `docs/19` D-11. Revisitable like every D-* decision.
+
+**2026-10-13 (rev 1, superseded):** a full dark pass ("Campus Neon" — navy canvas, violet→amber gradient accent, glow elevation) was shipped and reviewed the same day. It informed the ramp structure and the violet accent that survive into rev 2.
 
 Still placeholder: the logo **wordmark** ("ROOT-X" text + schematic glyph) — final mark needs its own exercise. Nothing in the product refers to UNIOSUN insignia; affiliation claims are prohibited until verified in writing.
 

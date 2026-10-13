@@ -105,7 +105,7 @@ export default function GuestTrack() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--canvas)', paddingBottom: 48 }}>
-      <header style={{ padding: '14px 16px', borderBottom: '1px solid var(--line-subtle)', background: 'oklch(0.185 0.028 258 / 0.9)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 40 }}>
+      <header style={{ padding: '14px 16px', borderBottom: '1px solid var(--line-subtle)', background: 'oklch(1 0 0 / 0.9)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 40 }}>
         <div className="row-between" style={{ maxWidth: 680, marginInline: 'auto' }}>
           <Logo size={22} />
           <span className="muted" style={{ fontSize: 'var(--text-2xs)' }}>

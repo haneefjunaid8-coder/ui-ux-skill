@@ -51,17 +51,16 @@
     width: 100%;
   }
   .btn-primary {
-    background: var(--grad-accent);
+    background: var(--root-600);
     color: white;
     box-shadow: var(--glow-accent);
     border: none;
   }
   .btn-primary:hover {
-    filter: brightness(1.08);
-    box-shadow: 0 14px 38px oklch(0.79 0.115 63 / 0.32);
+    background: var(--root-700);
   }
   .btn-primary:active {
-    filter: brightness(0.97);
+    background: var(--root-800);
   }
   .btn-secondary {
     background: var(--surface);
@@ -175,14 +174,14 @@
   .textarea:focus,
   .select:focus {
     border-color: var(--root-500);
-    box-shadow: 0 0 0 3px oklch(0.72 0.17 300 / 0.22);
+    box-shadow: 0 0 0 3px oklch(0.54 0.21 295 / 0.16);
     outline: none;
     background: var(--surface);
   }
   .input[aria-invalid='true'],
   .textarea[aria-invalid='true'] {
     border-color: var(--alert-400);
-    box-shadow: 0 0 0 3px oklch(0.7 0.19 25 / 0.16);
+    box-shadow: 0 0 0 3px oklch(0.55 0.2 25 / 0.14);
   }
   .textarea {
     min-height: 88px;
@@ -190,7 +189,7 @@
   }
   .select {
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23716b60' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23737b87' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 38px;
@@ -225,8 +224,8 @@
     width: 21px;
     height: 21px;
     border-radius: 50%;
-    background: var(--earth-950);
-    box-shadow: 0 1px 3px oklch(0 0 0 / 0.45);
+    background: oklch(1 0 0);
+    box-shadow: 0 1px 3px oklch(0.19 0.008 258 / 0.3), 0 0 0 1px oklch(0.19 0.008 258 / 0.05);
     transition: transform 200ms var(--ease-spring);
   }
   .toggle[aria-checked='true']::after {
@@ -415,7 +414,7 @@
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: oklch(0.1 0.02 258 / 0.66);
+    background: oklch(0.19 0.008 258 / 0.45);
     backdrop-filter: blur(3px);
     z-index: var(--z-modal);
     display: flex;
@@ -657,7 +656,7 @@
   }
   .code-input input:focus {
     border-color: var(--root-500);
-    box-shadow: 0 0 0 3px oklch(0.72 0.17 300 / 0.22);
+    box-shadow: 0 0 0 3px oklch(0.54 0.21 295 / 0.16);
     outline: none;
   }
 
@@ -685,13 +684,13 @@
     animation: toast-in 200ms var(--ease-decelerate);
   }
   .toast-success {
-    background: var(--root-800);
+    background: oklch(0.44 0.11 155);
   }
   .toast-warn {
-    background: var(--dusk-800);
+    background: oklch(0.46 0.10 58);
   }
   .toast-error {
-    background: var(--alert-800);
+    background: oklch(0.46 0.16 25);
   }
   @keyframes toast-in {
     from {

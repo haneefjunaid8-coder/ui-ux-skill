@@ -140,7 +140,7 @@ function QuickAction({ to, icon: Icon, title, sub, primary }: { to: string; icon
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: primary ? 'oklch(1 0 0 / 0.1)' : 'var(--root-950)',
+          background: primary ? 'oklch(1 0 0 / 0.12)' : 'var(--root-50)',
           color: primary ? 'white' : 'var(--root-700)',
           flexShrink: 0,
         }}
@@ -153,6 +153,14 @@ function QuickAction({ to, icon: Icon, title, sub, primary }: { to: string; icon
       </span>
     </Link>
   );
+}
+
+function riderName(state: ReturnType<typeof useRootX>, riderId: string): string {
+  const r = state.riders.find((x) => x.id === riderId);
+  const u = r?.userId ? state.users.find((x) => x.id === r.userId) : undefined;
+  if (!u) return 'Rider';
+  const [first, ...rest] = u.name.split(' ');
+  return rest.length ? `${first} ${rest[rest.length - 1][0]}.` : first;
 }
 
 function ActiveDeliveryCard({ id }: { id: string }) {
@@ -183,7 +191,7 @@ function ActiveDeliveryCard({ id }: { id: string }) {
       {rider && (
         <div className="row-between" style={{ fontSize: 'var(--text-xs)' }}>
           <span className="faint">
-            {rider.simulated ? 'Blessing A.' : 'Chidi O.'} · {rider.transport} {stale && <span style={{ color: 'var(--dusk-700)', fontWeight: 700 }}>· GPS stale</span>}
+            {riderName(state, rider.id)} · {rider.transport} {stale && <span style={{ color: 'var(--dusk-700)', fontWeight: 700 }}>· GPS stale</span>}
           </span>
           <span className="mono" style={{ fontWeight: 700 }}>
             ~{remaining} min

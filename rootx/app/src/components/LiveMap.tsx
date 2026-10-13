@@ -36,8 +36,8 @@ interface Props {
 }
 
 const ZONE_STYLE: Record<string, { color: string; fill: string }> = {
-  campus: { color: '#ae67fa', fill: 'rgba(174, 103, 250, 0.10)' },
-  township: { color: '#f49867', fill: 'rgba(244, 152, 103, 0.08)' },
+  campus: { color: '#6E3FE0', fill: 'rgba(110, 63, 224, 0.08)' },
+  township: { color: '#D9822B', fill: 'rgba(217, 130, 43, 0.10)' },
 };
 
 function pinIcon(p: MapPin): L.DivIcon {
@@ -84,7 +84,7 @@ export function LiveMap({
       attributionControl: true,
       preferCanvas: true,
     }).setView([7.7616, 4.6012], 14);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
@@ -159,7 +159,7 @@ export function LiveMap({
         const ll = toLatLng(p.x, p.y);
         return [ll.lat, ll.lng] as [number, number];
       });
-      L.polyline(latlngs, { color: '#ae67fa', weight: 3.5, opacity: 0.9, dashArray: '2 8', lineCap: 'round' }).addTo(layer);
+      L.polyline(latlngs, { color: '#5B2EDD', weight: 3.5, opacity: 0.9, dashArray: '2 8', lineCap: 'round' }).addTo(layer);
       bounds.extend(L.latLngBounds(latlngs));
     }
 

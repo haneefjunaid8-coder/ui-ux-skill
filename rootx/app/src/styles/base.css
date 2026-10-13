@@ -1,6 +1,7 @@
 /* ============================================================================
    ROOT-X base styles, reset and utilities.
-   Depth strategy: subtle shadows + quiet warm borders. Light mode by default.
+   Clean light identity (docs/06 §8): white surfaces, soft neutral shadows,
+   a whisper of violet at the top of the canvas. Nothing loud.
    ========================================================================== */
 
 @layer reset {
@@ -22,8 +23,8 @@
     line-height: 1.55;
     color: var(--ink);
     background:
-      radial-gradient(1100px 480px at 88% -12%, oklch(0.32 0.06 300 / 0.22), transparent 62%),
-      radial-gradient(900px 420px at -8% 108%, oklch(0.79 0.115 63 / 0.07), transparent 58%),
+      radial-gradient(1100px 480px at 88% -12%, oklch(0.94 0.03 295 / 0.55), transparent 62%),
+      radial-gradient(900px 420px at -8% 108%, oklch(0.96 0.025 75 / 0.4), transparent 58%),
       var(--canvas);
     min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
@@ -225,9 +226,10 @@
 
 @media (prefers-contrast: more) {
   :root {
-    --line: oklch(0.9 0.03 258 / 0.34);
-    --ink-2: var(--earth-900);
-    --ink-3: var(--earth-700);
+    --line: oklch(0.70 0.01 258);
+    --line-subtle: oklch(0.80 0.01 258);
+    --ink-2: var(--earth-800);
+    --ink-3: var(--earth-600);
   }
 }
 
@@ -243,7 +245,7 @@
   color: var(--ink-2);
   font-family: var(--font-ui);
   background:
-    radial-gradient(900px 420px at 50% -10%, oklch(0.32 0.06 300 / 0.25), transparent 60%),
+    radial-gradient(900px 420px at 50% -10%, oklch(0.93 0.03 295 / 0.5), transparent 60%),
     var(--canvas);
 }
 
@@ -271,11 +273,11 @@
 
 /* ---- LiveMap (Leaflet) ------------------------------------------------------ */
 .lx-map .leaflet-control-attribution {
-  background: oklch(0.15 0.02 258 / 0.8);
+  background: oklch(1 0 0 / 0.85);
   color: var(--ink-3);
   font-size: 10px;
 }
-.lx-map .leaflet-control-attribution a { color: var(--adire-400); }
+.lx-map .leaflet-control-attribution a { color: var(--adire-700); }
 .lx-map .leaflet-bar a {
   background: var(--surface);
   color: var(--ink);
@@ -299,7 +301,7 @@
   width: 16px; height: 16px; border-radius: 50%;
   background: var(--grad-accent);
   border: 2.5px solid #fff;
-  box-shadow: 0 4px 14px oklch(0 0 0 / 0.5), 0 0 18px oklch(0.72 0.17 300 / 0.55);
+  box-shadow: 0 2px 8px oklch(0.19 0.008 258 / 0.35), 0 0 0 1px oklch(0.19 0.008 258 / 0.08);
 }
 .lx-pin--active .lx-pin__dot { animation: lx-pulse 1.8s ease-out infinite; }
 .lx-pin--stale .lx-pin__dot {
@@ -309,7 +311,7 @@
 }
 .lx-pin__pulse {
   position: absolute; inset: 0; border-radius: 50%;
-  background: oklch(0.72 0.17 300 / 0.35);
+  background: oklch(0.54 0.21 295 / 0.3);
   animation: lx-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 .lx-pin--stale .lx-pin__pulse { display: none; }
@@ -319,22 +321,22 @@
   font: 800 11px/1 var(--font-ui);
   color: #fff;
   border: 2px solid #fff;
-  box-shadow: 0 3px 10px oklch(0 0 0 / 0.45);
+  box-shadow: 0 2px 8px oklch(0.19 0.008 258 / 0.3);
 }
-.lx-pin--pickup { background: var(--adire-400); }
-.lx-pin--dropoff { background: var(--dusk-400); }
+.lx-pin--pickup { background: var(--adire-600); }
+.lx-pin--dropoff { background: var(--dusk-500); }
 .lx-pin--generic { width: 14px; height: 14px; border-radius: 50%; background: var(--earth-600); border: 2px solid var(--surface); }
 .lx-lm {
   width: 11px; height: 11px; border-radius: 50%;
-  background: oklch(0.85 0.04 258 / 0.5);
-  border: 2px solid oklch(0.85 0.04 258 / 0.25);
+  background: oklch(0.55 0.012 258 / 0.45);
+  border: 2px solid oklch(0.55 0.012 258 / 0.2);
   box-sizing: border-box;
   cursor: pointer;
 }
 .lx-lm--hi {
   background: var(--root-400);
   border-color: #fff;
-  box-shadow: 0 0 12px oklch(0.72 0.17 300 / 0.7);
+  box-shadow: 0 0 10px oklch(0.54 0.21 295 / 0.45);
 }
 @keyframes lx-ping {
   0% { transform: scale(0.5); opacity: 1; }

@@ -43,7 +43,7 @@ export default function Shell() {
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          background: 'oklch(0.185 0.028 258 / 0.88)',
+          background: 'oklch(1 0 0 / 0.85)',
           backdropFilter: 'blur(14px) saturate(1.5)',
           borderBottom: '1px solid var(--line-subtle)',
         }}
@@ -140,7 +140,7 @@ export default function Shell() {
           bottom: 0,
           left: 0,
           right: 0,
-          background: 'oklch(0.205 0.032 258 / 0.94)',
+          background: 'oklch(1 0 0 / 0.92)',
           backdropFilter: 'blur(14px)',
           borderTop: '1px solid var(--line-subtle)',
           display: 'flex',
@@ -168,7 +168,7 @@ export default function Shell() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 6px 18px oklch(0.72 0.17 300 / 0.35)',
+                boxShadow: '0 6px 18px oklch(0.54 0.21 295 / 0.32)',
                 border: '3px solid var(--surface)',
                 textDecoration: 'none',
               }}

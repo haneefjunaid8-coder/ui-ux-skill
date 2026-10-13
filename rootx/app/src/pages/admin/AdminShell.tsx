@@ -114,7 +114,7 @@ export default function AdminShell() {
               position: 'sticky',
               top: 0,
               zIndex: 40,
-              background: 'oklch(0.185 0.028 258 / 0.88)',
+              background: 'oklch(1 0 0 / 0.88)',
               backdropFilter: 'blur(12px)',
               borderBottom: '1px solid var(--line-subtle)',
               padding: '10px 22px',

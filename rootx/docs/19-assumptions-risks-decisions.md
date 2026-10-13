@@ -11,7 +11,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | # | Assumption | Basis | Verification |
 |---|---|---|---|
 | A-1 | Students have smartphones with data and can install/use a PWA | University context | Pilot onboarding survey |
-| A-2 | Brand: **palette resolved 2026-10-13** (Campus Neon dark identity — D-11); name + wordmark still placeholder | Founder instruction + decision | Wordmark exercise pre-launch |
+| A-2 | Brand: **palette resolved 2026-10-13** (Campus Day clean light identity — D-11 rev 2); name + wordmark still placeholder | Founder instruction + decision | Wordmark exercise pre-launch |
 | A-3 | One campus (Osogbo) + Oke-Baale township is the right pilot scope | Brief | Founder sign-off on pilot zone map |
 | A-4 | Demand ≈ 30–50 runs/day at pilot | Analogy, not data | Week-2 pilot metrics |
 | A-5 | Students will accept OTP-only auth | Common NG pattern | Conversion funnel |
@@ -66,7 +66,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | D-8 | Zone geometry schematic in prototype (basemap is real OSM/Leaflet since 2026-10-13) | testable geofencing without surveying infra | surveyed polygons land in PostGIS |
 | D-9 | Integer kobo everywhere | money integrity | never |
 | D-10 | Config-driven pricing/hours/zones | no-deploy policy changes (C-7 adjacent) | never |
-| D-11 | Campus Neon dark identity app-wide (2026-10-13) | deliberate founder decision; extends the landing's language to the product (docs/06 §8) | rebrand exercise |
+| D-11 | Visual identity: **Campus Day clean light** (2026-10-13 rev 2) — white surfaces, one violet accent, green success; supersedes the same-day dark "Campus Neon" rev 1 after founder review | deliberate founder decision (docs/06 §8) | rebrand exercise |
 | D-12 | Real authoritative server (Fastify + SQLite) with SSE, sessions, per-viewer redaction; human-driven riders only | prototype must exercise the production trust model, not simulate it | production build-out |
 | D-13 | OTP codes returned in the otpRequest response (shown in-app) | no SMS gateway in prototype (U-8); keeps the flow real: rate-limited, attempt-limited, redacted everywhere else | SMS provider lands |
 
@@ -78,3 +78,4 @@ Until verified in writing, ROOT-X must not claim: UNIOSUN partnership, endorseme
 
 - v0.1 — initial register from the prototype build; U-1/U-2 flagged as the first two decisions the founder must make.
 - v0.2 — 2026-10-13: dark identity decision recorded (D-11, A-2 palette half resolved); real server + real OSM map shipped (D-12, U-5/D-8 updated); OTP delivery channel documented (D-13, U-8 unchanged — no SMS yet).
+- v0.3 — 2026-10-13: founder revised D-11 to the Campus Day clean light identity after reviewing the running app; PWA build shipped.

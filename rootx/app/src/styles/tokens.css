@@ -1,127 +1,129 @@
 /* ============================================================================
-   ROOT-X DESIGN TOKENS — "Campus Neon" (dark gradient identity)
+   ROOT-X DESIGN TOKENS — "Campus Day" (clean light identity)
    ----------------------------------------------------------------------------
-   Direction: the founder-selected dark identity, unified with the marketing
-   page (see rootx/landing + docs/06-design-system.md). A deep navy-black
-   canvas lit by soft radial glows; ONE violet→orange gradient reserved for
-   what matters; Manrope at heavy weights; honest status colours.
+   Direction: founder decision 2026-13-10 (supersedes the dark Campus Neon
+   pass — docs/06 §8). A clean, trustworthy light product in the Nigerian
+   fintech tradition: white surfaces on a whisper-grey canvas, slate ink,
+   ONE violet accent, green success. No gradients on chrome, no glow —
+   soft neutral shadows and crisp 1px borders. Manrope stays.
 
-   Signature: the "route thread" — a dashed path motif that runs through
-   steppers, tracking timelines, maps and empty states.
+   Signature kept: the "route thread" — a dashed path motif through steppers,
+   tracking timelines, maps and empty states.
 
-   All values are oklch where possible for perceptual uniformity. The
-   gradient identity tokens (--grad-*) are the ONLY place the two-colour
-   accent exists — components consume them, never re-invent them.
+   All values are oklch where possible for perceptual uniformity.
+   NOTE ramp directions: --root runs 50 (light) → 950 (dark). --earth runs
+   50 (lightest, canvas) → 950 (darkest, text) — same order, so surface/ink
+   semantics hold everywhere.
    ========================================================================== */
 
 @layer tokens {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
 
-    /* -- root: signature violet — THE accent -------------------------------- */
-    --root-50: oklch(0.965 0.02 300);
-    --root-100: oklch(0.935 0.05 300);
-    --root-200: oklch(0.885 0.09 300);
-    --root-300: oklch(0.815 0.13 300);
-    --root-400: oklch(0.72 0.17 300);   /* ≈ #AE67FA — primary accent */
-    --root-500: oklch(0.64 0.19 300);
-    --root-600: oklch(0.56 0.18 300);
-    --root-700: oklch(0.48 0.15 300);
-    --root-800: oklch(0.40 0.12 300);
-    --root-900: oklch(0.32 0.09 300);
-    --root-950: oklch(0.25 0.07 300);
+    /* -- root: signature violet — THE one accent ------------------------------ */
+    --root-50: oklch(0.972 0.012 295);
+    --root-100: oklch(0.945 0.028 295);
+    --root-200: oklch(0.90 0.05 295);
+    --root-300: oklch(0.83 0.08 295);
+    --root-400: oklch(0.72 0.14 295);
+    --root-500: oklch(0.62 0.19 295);
+    --root-600: oklch(0.54 0.21 295);   /* primary action ≈ #5B2EDD */
+    --root-700: oklch(0.47 0.19 295);
+    --root-800: oklch(0.40 0.16 295);
+    --root-900: oklch(0.33 0.12 295);
+    --root-950: oklch(0.26 0.09 295);
 
-    /* -- earth: deep-navy neutrals — structure (dark → light) ---------------- */
-    --earth-50: oklch(0.185 0.028 258);   /* page canvas ≈ #040C18 */
-    --earth-100: oklch(0.215 0.034 258);  /* recessed wells */
-    --earth-200: oklch(0.255 0.04 258);
-    --earth-300: oklch(0.315 0.046 258);  /* panel tone ≈ #042C54 family */
-    --earth-400: oklch(0.44 0.05 258);
-    --earth-500: oklch(0.57 0.05 258);
-    --earth-600: oklch(0.68 0.045 258);
-    --earth-700: oklch(0.77 0.038 258);   /* secondary text ≈ #81AFDD family */
-    --earth-800: oklch(0.85 0.028 258);
-    --earth-900: oklch(0.92 0.018 258);
-    --earth-950: oklch(0.975 0.008 258);  /* primary text — near white */
+    /* -- earth: neutral slate — structure (50 lightest = canvas → 950 ink) ---- */
+    --earth-50: oklch(0.975 0.003 258);   /* page canvas ≈ #F7F8FA */
+    --earth-100: oklch(0.95 0.004 258);
+    --earth-200: oklch(0.92 0.005 258);
+    --earth-300: oklch(0.87 0.006 258);
+    --earth-400: oklch(0.68 0.01 258);    /* disabled / muted */
+    --earth-500: oklch(0.55 0.012 258);   /* metadata */
+    --earth-600: oklch(0.44 0.012 258);   /* secondary text */
+    --earth-700: oklch(0.37 0.012 258);
+    --earth-800: oklch(0.30 0.01 258);
+    --earth-900: oklch(0.24 0.008 258);   /* toast / inverse surface */
+    --earth-950: oklch(0.19 0.008 258);   /* primary text ≈ #16191E */
 
-    /* -- dusk: golden-hour amber — RESERVED for safety-hours messaging ------- */
-    --dusk-50: oklch(0.23 0.055 70);
-    --dusk-100: oklch(0.29 0.075 70);
-    --dusk-200: oklch(0.37 0.1 70);
-    --dusk-300: oklch(0.49 0.12 70);
-    --dusk-400: oklch(0.61 0.13 68);
-    --dusk-500: oklch(0.71 0.13 66);      /* ≈ #F49867 — gradient hot end */
-    --dusk-600: oklch(0.79 0.115 63);
-    --dusk-700: oklch(0.85 0.095 60);
-    --dusk-800: oklch(0.89 0.075 58);
-    --dusk-900: oklch(0.94 0.05 55);
+    /* -- dusk: golden-hour amber — RESERVED for safety-hours messaging -------- */
+    --dusk-50: oklch(0.97 0.02 75);
+    --dusk-100: oklch(0.95 0.045 75);
+    --dusk-200: oklch(0.92 0.07 75);
+    --dusk-300: oklch(0.87 0.10 72);
+    --dusk-400: oklch(0.80 0.13 68);
+    --dusk-500: oklch(0.73 0.15 65);      /* icons, stars */
+    --dusk-600: oklch(0.65 0.14 60);
+    --dusk-700: oklch(0.55 0.12 58);      /* warn text */
+    --dusk-800: oklch(0.45 0.10 55);
+    --dusk-900: oklch(0.38 0.08 52);
 
-    /* -- adire: Osogbo indigo → light blue — informational / in motion ------- */
-    --adire-50: oklch(0.23 0.04 242);
-    --adire-100: oklch(0.29 0.05 242);
-    --adire-200: oklch(0.37 0.068 242);
-    --adire-300: oklch(0.49 0.09 242);
-    --adire-400: oklch(0.61 0.1 242);
-    --adire-500: oklch(0.71 0.09 242);    /* ≈ #81AFDD */
-    --adire-600: oklch(0.79 0.07 242);
-    --adire-700: oklch(0.86 0.05 242);
-    --adire-800: oklch(0.91 0.038 242);
-    --adire-900: oklch(0.96 0.02 242);
+    /* -- adire: information blue — in motion / selected ---------------------- */
+    --adire-50: oklch(0.97 0.012 250);
+    --adire-100: oklch(0.94 0.025 250);
+    --adire-200: oklch(0.90 0.045 250);
+    --adire-300: oklch(0.84 0.07 250);
+    --adire-400: oklch(0.66 0.13 250);
+    --adire-500: oklch(0.58 0.15 250);
+    --adire-600: oklch(0.50 0.16 250);
+    --adire-700: oklch(0.43 0.14 250);
+    --adire-800: oklch(0.37 0.11 250);
+    --adire-900: oklch(0.31 0.08 250);
 
     /* -- alert: danger / SOS — paired with icons, never alone ---------------- */
-    --alert-50: oklch(0.23 0.06 25);
-    --alert-100: oklch(0.29 0.08 25);
-    --alert-200: oklch(0.38 0.11 25);
-    --alert-300: oklch(0.5 0.14 25);
-    --alert-400: oklch(0.62 0.18 25);
-    --alert-500: oklch(0.7 0.19 25);
-    --alert-600: oklch(0.77 0.16 25);
-    --alert-700: oklch(0.83 0.12 25);
-    --alert-800: oklch(0.88 0.09 25);
-    --alert-900: oklch(0.93 0.06 25);
+    --alert-50: oklch(0.97 0.015 25);
+    --alert-100: oklch(0.94 0.03 25);
+    --alert-200: oklch(0.90 0.05 25);
+    --alert-300: oklch(0.80 0.09 25);
+    --alert-400: oklch(0.66 0.16 25);
+    --alert-500: oklch(0.60 0.19 25);
+    --alert-600: oklch(0.55 0.20 25);     /* primary danger ≈ #D9382C */
+    --alert-700: oklch(0.48 0.18 25);
+    --alert-800: oklch(0.42 0.15 25);
+    --alert-900: oklch(0.36 0.12 25);
 
-    /* ---- THE gradient identity (violet → orange) -------------------------- */
-    --grad-accent: linear-gradient(103deg, #ae67fa -13.86%, #f49867 99.55%);
-    --grad-accent-soft: linear-gradient(103deg, oklch(0.72 0.17 300 / 0.16), oklch(0.79 0.115 63 / 0.14));
-    --grad-text: linear-gradient(97deg, #c9a1ff 0%, #f49867 100%);
+    /* ---- accent treatments (near-solid; usable as backgrounds safely) ------ */
+    --grad-accent: linear-gradient(103deg, oklch(0.56 0.21 295) 0%, oklch(0.50 0.20 290) 100%);
+    --grad-accent-soft: linear-gradient(103deg, oklch(0.56 0.21 295 / 0.08), oklch(0.58 0.15 250 / 0.06));
+    --grad-text: linear-gradient(97deg, oklch(0.47 0.19 295) 0%, oklch(0.42 0.16 265) 100%);
 
     /* ---- semantic: text ---------------------------------------------------- */
-    --ink: var(--earth-950);          /* primary text — near white */
-    --ink-2: var(--earth-700);        /* secondary text — light blue */
+    --ink: var(--earth-950);          /* primary text — near black */
+    --ink-2: var(--earth-600);        /* secondary text */
     --ink-3: var(--earth-500);        /* tertiary / metadata */
     --ink-4: var(--earth-400);        /* muted / disabled */
 
-    /* ---- semantic: surfaces (navy stack) ----------------------------------- */
+    /* ---- semantic: surfaces (white stack on a whisper-grey canvas) ---------- */
     --canvas: var(--earth-50);
-    --canvas-tint: oklch(0.165 0.024 258);
-    --surface: oklch(0.225 0.034 258);        /* cards */
-    --surface-inset: var(--earth-100);         /* inputs — "type here" well */
-    --surface-hover: oklch(0.265 0.042 258);
+    --canvas-tint: oklch(0.955 0.004 258);
+    --surface: oklch(1 0 0);                  /* cards */
+    --surface-inset: oklch(0.965 0.005 258);  /* inputs — the "type here" well */
+    --surface-hover: oklch(0.975 0.004 258);
     --surface-active: var(--earth-200);
-    --surface-sunken: oklch(0.155 0.022 258);
+    --surface-sunken: oklch(0.94 0.005 258);
 
     /* ---- semantic: borders -------------------------------------------------- */
-    --line: oklch(0.85 0.04 258 / 0.13);
-    --line-subtle: oklch(0.85 0.04 258 / 0.07);
-    --line-strong: oklch(0.85 0.04 258 / 0.22);
-    --line-focus: var(--root-400);
+    --line: oklch(0.88 0.006 258);
+    --line-subtle: oklch(0.925 0.005 258);
+    --line-strong: oklch(0.78 0.008 258);
+    --line-focus: var(--root-600);
 
     /* ---- semantic: status (always paired with icon + label) ---------------- */
-    --status-go: var(--root-400);       /* delivered / success */
-    --status-go-bg: var(--root-950);
-    --status-go-fg: var(--root-200);
-    --status-motion: var(--adire-400);  /* assigned / in transit */
-    --status-motion-bg: var(--adire-100);
-    --status-motion-fg: var(--adire-600);
-    --status-wait: var(--dusk-400);     /* action needed / warning */
+    --status-go: oklch(0.55 0.13 155);        /* delivered / success — green */
+    --status-go-bg: oklch(0.95 0.04 155);
+    --status-go-fg: oklch(0.42 0.11 155);
+    --status-motion: var(--adire-500);        /* assigned / in transit */
+    --status-motion-bg: var(--adire-50);
+    --status-motion-fg: var(--adire-800);
+    --status-wait: var(--dusk-600);           /* action needed / warning */
     --status-wait-bg: var(--dusk-100);
-    --status-wait-fg: var(--dusk-600);
-    --status-hold: var(--earth-500);    /* draft / cancelled / neutral */
-    --status-hold-bg: var(--earth-200);
+    --status-wait-fg: var(--dusk-800);
+    --status-hold: var(--earth-500);          /* draft / cancelled / neutral */
+    --status-hold-bg: var(--earth-100);
     --status-hold-fg: var(--earth-700);
-    --status-alert: var(--alert-400);   /* disputed / danger */
-    --status-alert-bg: var(--alert-100);
-    --status-alert-fg: var(--alert-600);
+    --status-alert: var(--alert-600);         /* disputed / danger */
+    --status-alert-bg: var(--alert-50);
+    --status-alert-fg: var(--alert-800);
 
     /* ---- type --------------------------------------------------------------- */
     --font-display: 'Manrope Variable', system-ui, sans-serif;
@@ -149,12 +151,12 @@
     /* ---- radius --------------------------------------------------------------- */
     --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-full: 999px;
 
-    /* ---- depth: glow-forward dark shadows -------------------------------------- */
-    --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.4), 0 0 0 0.5px oklch(0.85 0.04 258 / 0.08);
-    --shadow-md: 0 2px 6px oklch(0 0 0 / 0.35), 0 8px 20px oklch(0 0 0 / 0.3);
-    --shadow-lg: 0 4px 10px oklch(0 0 0 / 0.35), 0 18px 44px oklch(0 0 0 / 0.45);
-    --shadow-raise: 0 12px 34px oklch(0 0 0 / 0.55), 0 0 40px oklch(0.72 0.17 300 / 0.12);
-    --glow-accent: 0 10px 30px oklch(0.72 0.17 300 / 0.3);
+    /* ---- depth: soft neutral shadows, no glow ------------------------------- */
+    --shadow-sm: 0 1px 2px oklch(0.19 0.008 258 / 0.06);
+    --shadow-md: 0 2px 6px oklch(0.19 0.008 258 / 0.06), 0 8px 20px oklch(0.19 0.008 258 / 0.07);
+    --shadow-lg: 0 4px 12px oklch(0.19 0.008 258 / 0.08), 0 16px 40px oklch(0.19 0.008 258 / 0.12);
+    --shadow-raise: 0 12px 34px oklch(0.19 0.008 258 / 0.16);
+    --glow-accent: 0 6px 16px oklch(0.54 0.21 295 / 0.28);
 
     /* ---- motion ------------------------------------------------------------------ */
     --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -172,7 +174,7 @@
     --admin-sidebar: 256px;
 
     /* -- signature: the route thread -------------------------------------------------- */
-    --thread: var(--root-400);
+    --thread: var(--root-500);
     --thread-dash: 2 7;
     --thread-width: 2.5px;
   }

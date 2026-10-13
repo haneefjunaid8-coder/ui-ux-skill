@@ -17,7 +17,7 @@ rootx/
 │   │   │                 #   matching, verification, zones/geofencing, ledger.
 │   │   └── *.test.ts     #   8 test files / 56 tests, incl. full-journey
 │   ├── src/pages/        # customer, guest, rider, admin (ops/finance/security)
-│   ├── src/ds/           # design system (tokens + primitives, Campus Neon dark)
+│   ├── src/ds/           # design system (tokens + primitives, Campus Day light)
 │   └── src/components/   # Leaflet/OSM live map, timeline, network badge
 ├── server/               # ★ Real API: Fastify + SQLite, sessions, SSE,
 │                         #   per-viewer redaction, server clock. The engine
@@ -73,7 +73,7 @@ Open the server's URL on your phone and install ROOT-X like a native app:
 - **Android / Chrome** — tap **Install app** in the address bar (or ⋮ → *Add to Home screen*).
 - **iPhone / Safari** — Share → **Add to Home Screen**.
 
-You get a standalone window, the ROOT-X icon (Campus Neon dark mark), and an
+You get a standalone window, the ROOT-X icon (dark violet mark on the night canvas — reads well on any home screen), and an
 app that keeps working offline: the shell and map tiles are cached by the
 service worker, actions queue honestly and replay when the connection returns,
 and payments/verification always wait for the server — nothing is faked.
