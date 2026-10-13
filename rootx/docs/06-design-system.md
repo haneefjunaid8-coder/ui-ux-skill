@@ -10,9 +10,16 @@ The design system is code: `rootx/app/src/ds/` (tokens, primitives) + `rootx/app
 4. **Money is transparent** — every naira shown with its reason (line items, net vs gross).
 5. **Editable identity** — all brand values are tokens; nothing visual is hard-coded.
 
-## 2. Color tokens — "Campus Day" clean light identity
+## 2. Color tokens — "Courier" minimal light identity (Couriq reference)
 
-The product is **light everywhere** (`color-scheme: light`): white surfaces on a whisper-grey canvas, slate ink, ONE violet accent, green success — the clean, trustworthy register of Nigerian consumer fintech. No gradients on chrome, no glow; soft neutral shadows and crisp 1px borders. (The marketing landing keeps its own dark 3D language — marketing and product are different objects.)
+The product follows the founder-selected reference concept — Orbix Studio's **Couriq** smart-delivery shot (dribbble.com/shots/26770756): flat light-grey minimalism, monochrome + one warm orange, near-black ink. Palette taken from the shot's tagged colours:
+
+```
+#F3F3F3 canvas · #FFFFFF cards · #060606 ink · #525255 body ·
+#667589 slate secondary · #B9BABA hairlines · #E88E40 accent · #D15F26 primary CTA
+```
+
+Semantic colours stay functional but muted: success renders **near-black** (the accent belongs to motion and action), in-transit is orange, warnings amber, danger red. Pill buttons, generous radius (cards 20px), hairline borders + very soft shadows, flat canvas. (The marketing landing keeps its own dark 3D language — marketing and product are different objects.)
 
 ```css
 --root-50 … --root-950   /* the ONE accent — violet (≈ #5B2EDD at 600) */
@@ -79,9 +86,11 @@ Only functional motion: 150–250 ms ease-out for overlays and toasts; no parall
 
 ## 8. Brand identity — decision record
 
-**2026-10-13 (rev 2, current) — deliberate founder decision:** the product moves to a **clean light identity — "Campus Day"**: white surfaces, slate ink, one violet accent, green success, soft shadows, no gradients/glow. This supersedes rev 1 below after founder review of the running app, and is recorded here and in `docs/19` D-11. Revisitable like every D-* decision.
+**2026-10-13 (rev 3, current) — deliberate founder decision:** the product adopts the **Couriq reference style** — flat #F3F3F3 canvas, white cards, #060606 ink, one orange accent (#E88E40/#D15F26), pill buttons, hairline borders. Supersedes rev 2 below; recorded in `docs/19` D-11. Revisitable like every D-* decision. *IP note: this is a style adaptation of a third-party Dribbble concept for prototype purposes — a production launch requires an original design pass or a license (docs/19 R-12).*
 
-**2026-10-13 (rev 1, superseded):** a full dark pass ("Campus Neon" — navy canvas, violet→amber gradient accent, glow elevation) was shipped and reviewed the same day. It informed the ramp structure and the violet accent that survive into rev 2.
+**2026-10-13 (rev 2, superseded):** "Campus Day" clean light — white surfaces, slate ink, violet accent, green success.
+
+**2026-10-13 (rev 1, superseded):** "Campus Neon" dark — navy canvas, violet→amber gradient accent, glow elevation.
 
 Still placeholder: the logo **wordmark** ("ROOT-X" text + schematic glyph) — final mark needs its own exercise. Nothing in the product refers to UNIOSUN insignia; affiliation claims are prohibited until verified in writing.
 

@@ -11,7 +11,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | # | Assumption | Basis | Verification |
 |---|---|---|---|
 | A-1 | Students have smartphones with data and can install/use a PWA | University context | Pilot onboarding survey |
-| A-2 | Brand: **palette resolved 2026-10-13** (Campus Day clean light identity — D-11 rev 2); name + wordmark still placeholder | Founder instruction + decision | Wordmark exercise pre-launch |
+| A-2 | Brand: **palette resolved 2026-10-13** (Courier minimal light, Couriq reference — D-11 rev 3); name + wordmark still placeholder | Founder instruction + decision | Wordmark exercise pre-launch |
 | A-3 | One campus (Osogbo) + Oke-Baale township is the right pilot scope | Brief | Founder sign-off on pilot zone map |
 | A-4 | Demand ≈ 30–50 runs/day at pilot | Analogy, not data | Week-2 pilot metrics |
 | A-5 | Students will accept OTP-only auth | Common NG pattern | Conversion funnel |
@@ -51,6 +51,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | R-9 | Prototype→production drift | M×M | rules layer is production code; parity check between `types.ts` and schema in CI (docs/08 §5) |
 | R-10 | Poor network degrades trust | H×M | C-8 honesty contract (stale/offline states), queued actions, PWA caching |
 | R-11 | Founder bandwidth (single owner) | H×M | docs/runbooks reduce bus-factor; pilot scope deliberately small |
+| R-12 | UI style adapted from a third-party Dribbble concept (Orbix Studio's Couriq) | M×M | prototype-only reference; production requires an original design pass or a license before public launch |
 
 ## 5. Decisions already made (D-*) — with rationale, revisitable
 
@@ -66,7 +67,7 @@ C-1 verified student riders only · C-2 approved campus/township zones only · C
 | D-8 | Zone geometry schematic in prototype (basemap is real OSM/Leaflet since 2026-10-13) | testable geofencing without surveying infra | surveyed polygons land in PostGIS |
 | D-9 | Integer kobo everywhere | money integrity | never |
 | D-10 | Config-driven pricing/hours/zones | no-deploy policy changes (C-7 adjacent) | never |
-| D-11 | Visual identity: **Campus Day clean light** (2026-10-13 rev 2) — white surfaces, one violet accent, green success; supersedes the same-day dark "Campus Neon" rev 1 after founder review | deliberate founder decision (docs/06 §8) | rebrand exercise |
+| D-11 | Visual identity: **"Courier" minimal light** after the Couriq reference (2026-10-13 rev 3) — flat #F3F3F3, white cards, #060606 ink, orange #E88E40/#D15F26 accent, pill buttons; supersedes rev 2 (Campus Day) and rev 1 (Campus Neon) | deliberate founder decision (docs/06 §8) | rebrand exercise |
 | D-12 | Real authoritative server (Fastify + SQLite) with SSE, sessions, per-viewer redaction; human-driven riders only | prototype must exercise the production trust model, not simulate it | production build-out |
 | D-13 | OTP codes returned in the otpRequest response (shown in-app) | no SMS gateway in prototype (U-8); keeps the flow real: rate-limited, attempt-limited, redacted everywhere else | SMS provider lands |
 
@@ -79,3 +80,4 @@ Until verified in writing, ROOT-X must not claim: UNIOSUN partnership, endorseme
 - v0.1 — initial register from the prototype build; U-1/U-2 flagged as the first two decisions the founder must make.
 - v0.2 — 2026-10-13: dark identity decision recorded (D-11, A-2 palette half resolved); real server + real OSM map shipped (D-12, U-5/D-8 updated); OTP delivery channel documented (D-13, U-8 unchanged — no SMS yet).
 - v0.3 — 2026-10-13: founder revised D-11 to the Campus Day clean light identity after reviewing the running app; PWA build shipped.
+- v0.4 — 2026-10-13: founder selected the Couriq Dribbble concept as the reference style (D-11 rev 3); R-12 added (design-reference IP).

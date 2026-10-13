@@ -90,7 +90,7 @@ export default function Login() {
           style={{
             flexDirection: 'column',
             padding: 'clamp(32px, 4vw, 64px)',
-            background: 'radial-gradient(900px 480px at 20% -10%, oklch(0.93 0.04 295 / 0.55), transparent 60%), linear-gradient(165deg, oklch(0.985 0.004 295), oklch(0.952 0.008 295))',
+            background: 'radial-gradient(900px 480px at 20% -10%, oklch(0.95 0.03 60 / 0.45), transparent 60%), linear-gradient(165deg, oklch(0.985 0.002 250), oklch(0.94 0.003 250))',
             borderRight: '1px solid var(--line-subtle)',
           }}
         >

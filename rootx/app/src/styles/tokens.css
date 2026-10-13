@@ -1,120 +1,127 @@
 /* ============================================================================
-   ROOT-X DESIGN TOKENS — "Campus Day" (clean light identity)
+   ROOT-X DESIGN TOKENS — "Courier" minimal light identity
    ----------------------------------------------------------------------------
-   Direction: founder decision 2026-13-10 (supersedes the dark Campus Neon
-   pass — docs/06 §8). A clean, trustworthy light product in the Nigerian
-   fintech tradition: white surfaces on a whisper-grey canvas, slate ink,
-   ONE violet accent, green success. No gradients on chrome, no glow —
-   soft neutral shadows and crisp 1px borders. Manrope stays.
+   Direction: founder-selected reference — Orbix Studio's "Couriq" smart
+   delivery concept (dribbble.com/shots/26770756), 2026-10-13 (D-11 rev 3;
+   supersedes Campus Day rev 2 — docs/06 §8).
+
+   The DNA, taken from the shot's tagged palette:
+     #F3F3F3 canvas · white cards · #060606 ink · #525255 body ·
+     #667589 slate secondary · #B9BABA lines · #E88E40 orange accent ·
+     #D15F26 deep orange CTA.
+
+   Flat, quiet, monochrome + ONE warm orange. No gradients on chrome, no
+   glow — hairline grey borders and very soft shadows. Pill buttons,
+   generous radius. Semantic status colours (amber warn / red danger) stay
+   functional but muted; success renders in near-black — the accent belongs
+   to motion and action.
 
    Signature kept: the "route thread" — a dashed path motif through steppers,
-   tracking timelines, maps and empty states.
+   tracking timelines, maps and empty states (now deep orange).
 
-   All values are oklch where possible for perceptual uniformity.
    NOTE ramp directions: --root runs 50 (light) → 950 (dark). --earth runs
-   50 (lightest, canvas) → 950 (darkest, text) — same order, so surface/ink
-   semantics hold everywhere.
+   50 (lightest, canvas) → 950 (darkest, ink).
    ========================================================================== */
 
 @layer tokens {
   :root {
     color-scheme: light;
 
-    /* -- root: signature violet — THE one accent ------------------------------ */
-    --root-50: oklch(0.972 0.012 295);
-    --root-100: oklch(0.945 0.028 295);
-    --root-200: oklch(0.90 0.05 295);
-    --root-300: oklch(0.83 0.08 295);
-    --root-400: oklch(0.72 0.14 295);
-    --root-500: oklch(0.62 0.19 295);
-    --root-600: oklch(0.54 0.21 295);   /* primary action ≈ #5B2EDD */
-    --root-700: oklch(0.47 0.19 295);
-    --root-800: oklch(0.40 0.16 295);
-    --root-900: oklch(0.33 0.12 295);
-    --root-950: oklch(0.26 0.09 295);
+    /* -- root: THE orange — action, motion, brand ---------------------------- */
+    --root-50: oklch(0.972 0.015 62);
+    --root-100: oklch(0.945 0.035 60);
+    --root-200: oklch(0.912 0.058 58);
+    --root-300: oklch(0.855 0.09 55);
+    --root-400: oklch(0.75 0.12 52);   /* ≈ #E88E40 — accent highlights */
+    --root-500: oklch(0.665 0.145 50);
+    --root-600: oklch(0.585 0.165 47); /* ≈ #D15F26 — primary CTA */
+    --root-700: oklch(0.515 0.155 45);
+    --root-800: oklch(0.445 0.14 43);
+    --root-900: oklch(0.375 0.115 42);
+    --root-950: oklch(0.295 0.085 42);
 
-    /* -- earth: neutral slate — structure (50 lightest = canvas → 950 ink) ---- */
-    --earth-50: oklch(0.975 0.003 258);   /* page canvas ≈ #F7F8FA */
-    --earth-100: oklch(0.95 0.004 258);
-    --earth-200: oklch(0.92 0.005 258);
-    --earth-300: oklch(0.87 0.006 258);
-    --earth-400: oklch(0.68 0.01 258);    /* disabled / muted */
-    --earth-500: oklch(0.55 0.012 258);   /* metadata */
-    --earth-600: oklch(0.44 0.012 258);   /* secondary text */
-    --earth-700: oklch(0.37 0.012 258);
-    --earth-800: oklch(0.30 0.01 258);
-    --earth-900: oklch(0.24 0.008 258);   /* toast / inverse surface */
-    --earth-950: oklch(0.19 0.008 258);   /* primary text ≈ #16191E */
+    /* -- earth: neutral grey-slate — structure (50 canvas → 950 ink) --------- */
+    --earth-50: oklch(0.962 0.002 250);   /* page canvas ≈ #F3F3F3 */
+    --earth-100: oklch(0.938 0.002 250);
+    --earth-200: oklch(0.905 0.003 250);
+    --earth-300: oklch(0.845 0.004 250);
+    --earth-400: oklch(0.72 0.006 250);   /* disabled / muted */
+    --earth-500: oklch(0.57 0.028 250);   /* metadata ≈ #667589 */
+    --earth-600: oklch(0.44 0.006 260);   /* secondary text ≈ #525255 */
+    --earth-700: oklch(0.37 0.006 260);
+    --earth-800: oklch(0.30 0.005 260);
+    --earth-900: oklch(0.21 0.004 260);   /* inverse surface */
+    --earth-950: oklch(0.13 0.003 260);   /* primary text ≈ #060606 */
 
-    /* -- dusk: golden-hour amber — RESERVED for safety-hours messaging -------- */
-    --dusk-50: oklch(0.97 0.02 75);
-    --dusk-100: oklch(0.95 0.045 75);
-    --dusk-200: oklch(0.92 0.07 75);
-    --dusk-300: oklch(0.87 0.10 72);
-    --dusk-400: oklch(0.80 0.13 68);
-    --dusk-500: oklch(0.73 0.15 65);      /* icons, stars */
-    --dusk-600: oklch(0.65 0.14 60);
-    --dusk-700: oklch(0.55 0.12 58);      /* warn text */
-    --dusk-800: oklch(0.45 0.10 55);
-    --dusk-900: oklch(0.38 0.08 52);
+    /* -- dusk: amber — semantic warnings only (safety hours) ------------------ */
+    --dusk-50: oklch(0.968 0.02 85);
+    --dusk-100: oklch(0.945 0.045 82);
+    --dusk-200: oklch(0.915 0.07 78);
+    --dusk-300: oklch(0.87 0.09 74);
+    --dusk-400: oklch(0.80 0.115 70);
+    --dusk-500: oklch(0.72 0.13 66);
+    --dusk-600: oklch(0.62 0.125 62);
+    --dusk-700: oklch(0.52 0.11 60);      /* warn text */
+    --dusk-800: oklch(0.43 0.095 58);
+    --dusk-900: oklch(0.36 0.08 56);
 
-    /* -- adire: information blue — in motion / selected ---------------------- */
-    --adire-50: oklch(0.97 0.012 250);
-    --adire-100: oklch(0.94 0.025 250);
-    --adire-200: oklch(0.90 0.045 250);
-    --adire-300: oklch(0.84 0.07 250);
-    --adire-400: oklch(0.66 0.13 250);
-    --adire-500: oklch(0.58 0.15 250);
-    --adire-600: oklch(0.50 0.16 250);
-    --adire-700: oklch(0.43 0.14 250);
-    --adire-800: oklch(0.37 0.11 250);
-    --adire-900: oklch(0.31 0.08 250);
+    /* -- adire: slate blue — information / neutral motion --------------------- */
+    --adire-50: oklch(0.965 0.008 250);
+    --adire-100: oklch(0.935 0.016 250);
+    --adire-200: oklch(0.9 0.03 250);
+    --adire-300: oklch(0.84 0.045 250);
+    --adire-400: oklch(0.64 0.06 250);
+    --adire-500: oklch(0.57 0.05 250);    /* ≈ #667589 family */
+    --adire-600: oklch(0.50 0.055 250);
+    --adire-700: oklch(0.43 0.05 250);
+    --adire-800: oklch(0.37 0.04 250);
+    --adire-900: oklch(0.31 0.032 250);
 
     /* -- alert: danger / SOS — paired with icons, never alone ---------------- */
-    --alert-50: oklch(0.97 0.015 25);
-    --alert-100: oklch(0.94 0.03 25);
+    --alert-50: oklch(0.965 0.015 25);
+    --alert-100: oklch(0.935 0.03 25);
     --alert-200: oklch(0.90 0.05 25);
-    --alert-300: oklch(0.80 0.09 25);
-    --alert-400: oklch(0.66 0.16 25);
-    --alert-500: oklch(0.60 0.19 25);
-    --alert-600: oklch(0.55 0.20 25);     /* primary danger ≈ #D9382C */
-    --alert-700: oklch(0.48 0.18 25);
-    --alert-800: oklch(0.42 0.15 25);
-    --alert-900: oklch(0.36 0.12 25);
+    --alert-300: oklch(0.80 0.08 25);
+    --alert-400: oklch(0.64 0.15 25);
+    --alert-500: oklch(0.57 0.18 25);
+    --alert-600: oklch(0.51 0.19 25);
+    --alert-700: oklch(0.45 0.17 25);
+    --alert-800: oklch(0.39 0.14 25);
+    --alert-900: oklch(0.33 0.11 25);
 
-    /* ---- accent treatments (near-solid; usable as backgrounds safely) ------ */
-    --grad-accent: linear-gradient(103deg, oklch(0.56 0.21 295) 0%, oklch(0.50 0.20 290) 100%);
-    --grad-accent-soft: linear-gradient(103deg, oklch(0.56 0.21 295 / 0.08), oklch(0.58 0.15 250 / 0.06));
-    --grad-text: linear-gradient(97deg, oklch(0.47 0.19 295) 0%, oklch(0.42 0.16 265) 100%);
+    /* ---- accent treatments (reserved: hero card, boot orb, gradient text) --- */
+    --grad-accent: linear-gradient(103deg, #e88e40 0%, #d15f26 100%);
+    --grad-accent-soft: linear-gradient(103deg, oklch(0.75 0.12 52 / 0.10), oklch(0.585 0.165 47 / 0.06));
+    --grad-text: linear-gradient(97deg, oklch(0.515 0.155 45) 0%, oklch(0.44 0.14 43) 100%);
 
     /* ---- semantic: text ---------------------------------------------------- */
-    --ink: var(--earth-950);          /* primary text — near black */
-    --ink-2: var(--earth-600);        /* secondary text */
-    --ink-3: var(--earth-500);        /* tertiary / metadata */
+    --ink: var(--earth-950);          /* primary text — near black #060606 */
+    --ink-2: var(--earth-600);        /* secondary text ≈ #525255 */
+    --ink-3: var(--earth-500);        /* tertiary / metadata ≈ #667589 */
     --ink-4: var(--earth-400);        /* muted / disabled */
 
-    /* ---- semantic: surfaces (white stack on a whisper-grey canvas) ---------- */
+    /* ---- semantic: surfaces (white stack on flat grey canvas) --------------- */
     --canvas: var(--earth-50);
-    --canvas-tint: oklch(0.955 0.004 258);
-    --surface: oklch(1 0 0);                  /* cards */
-    --surface-inset: oklch(0.965 0.005 258);  /* inputs — the "type here" well */
-    --surface-hover: oklch(0.975 0.004 258);
+    --canvas-tint: oklch(0.945 0.002 250);
+    --surface: oklch(1 0 0);                  /* cards — pure white */
+    --surface-inset: oklch(0.945 0.002 250);  /* inputs — grey well on white */
+    --surface-hover: oklch(0.972 0.002 250);
     --surface-active: var(--earth-200);
-    --surface-sunken: oklch(0.94 0.005 258);
+    --surface-sunken: oklch(0.925 0.002 250);
 
     /* ---- semantic: borders -------------------------------------------------- */
-    --line: oklch(0.88 0.006 258);
-    --line-subtle: oklch(0.925 0.005 258);
-    --line-strong: oklch(0.78 0.008 258);
+    --line: oklch(0.80 0.003 250);            /* ≈ #B9BABA */
+    --line-subtle: oklch(0.905 0.003 250);
+    --line-strong: oklch(0.70 0.005 250);
     --line-focus: var(--root-600);
 
     /* ---- semantic: status (always paired with icon + label) ---------------- */
-    --status-go: oklch(0.55 0.13 155);        /* delivered / success — green */
-    --status-go-bg: oklch(0.95 0.04 155);
-    --status-go-fg: oklch(0.42 0.11 155);
-    --status-motion: var(--adire-500);        /* assigned / in transit */
-    --status-motion-bg: var(--adire-50);
-    --status-motion-fg: var(--adire-800);
+    --status-go: oklch(0.16 0.004 260);       /* success — near black */
+    --status-go-bg: oklch(0.16 0.004 260);
+    --status-go-fg: oklch(0.97 0.002 250);
+    --status-motion: var(--root-500);         /* assigned / in transit — orange */
+    --status-motion-bg: var(--root-50);
+    --status-motion-fg: var(--root-800);
     --status-wait: var(--dusk-600);           /* action needed / warning */
     --status-wait-bg: var(--dusk-100);
     --status-wait-fg: var(--dusk-800);
@@ -148,15 +155,15 @@
     --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px;
     --s8: 32px; --s10: 40px; --s12: 48px; --s16: 64px;
 
-    /* ---- radius --------------------------------------------------------------- */
-    --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-full: 999px;
+    /* ---- radius — generous, pill CTAs ------------------------------------------ */
+    --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 26px; --r-full: 999px;
 
-    /* ---- depth: soft neutral shadows, no glow ------------------------------- */
-    --shadow-sm: 0 1px 2px oklch(0.19 0.008 258 / 0.06);
-    --shadow-md: 0 2px 6px oklch(0.19 0.008 258 / 0.06), 0 8px 20px oklch(0.19 0.008 258 / 0.07);
-    --shadow-lg: 0 4px 12px oklch(0.19 0.008 258 / 0.08), 0 16px 40px oklch(0.19 0.008 258 / 0.12);
-    --shadow-raise: 0 12px 34px oklch(0.19 0.008 258 / 0.16);
-    --glow-accent: 0 6px 16px oklch(0.54 0.21 295 / 0.28);
+    /* ---- depth: hairline borders + very soft neutral shadows ----------------- */
+    --shadow-sm: 0 1px 2px oklch(0.13 0.003 260 / 0.05);
+    --shadow-md: 0 2px 6px oklch(0.13 0.003 260 / 0.05), 0 8px 20px oklch(0.13 0.003 260 / 0.06);
+    --shadow-lg: 0 4px 12px oklch(0.13 0.003 260 / 0.06), 0 16px 40px oklch(0.13 0.003 260 / 0.10);
+    --shadow-raise: 0 12px 34px oklch(0.13 0.003 260 / 0.14);
+    --glow-accent: 0 6px 16px oklch(0.585 0.165 47 / 0.30);
 
     /* ---- motion ------------------------------------------------------------------ */
     --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -174,7 +181,7 @@
     --admin-sidebar: 256px;
 
     /* -- signature: the route thread -------------------------------------------------- */
-    --thread: var(--root-500);
+    --thread: var(--root-600);
     --thread-dash: 2 7;
     --thread-width: 2.5px;
   }

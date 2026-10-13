@@ -4,10 +4,11 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 
-const VIOLET = '#AE67FA';
-const VIOLET_SOFT = '#C9A1FF';
-const AMBER = '#F49867';
-const CANVAS = '#040C18';
+const INK = '#060606';
+const SLATE = '#667589';
+const ORANGE = '#D15F26';
+const ORANGE_SOFT = '#E88E40';
+const CANVAS = '#F3F3F3';
 
 /** The ROOT-X mark scaled to a square canvas.
  * r = outer ring radius; stroke weights follow the wordmark's proportions. */
@@ -20,20 +21,20 @@ function markSvg(size, r, ringStroke, arcStroke, crossStroke, pad = 0) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <radialGradient id="bg" cx="50%" cy="36%" r="80%">
-      <stop offset="0%" stop-color="#191036"/>
-      <stop offset="55%" stop-color="#0A1226"/>
-      <stop offset="100%" stop-color="${CANVAS}"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="55%" stop-color="#F5F5F6"/>
+      <stop offset="100%" stop-color="#EDEDEF"/>
     </radialGradient>
     <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${VIOLET}"/>
-      <stop offset="100%" stop-color="${AMBER}"/>
+      <stop offset="0%" stop-color="${INK}"/>
+      <stop offset="100%" stop-color="${ORANGE}"/>
     </linearGradient>
   </defs>
   <rect width="${size}" height="${size}" fill="url(#bg)"/>
   <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="url(#ring)" stroke-width="${ringStroke}"/>
-  <path d="M ${p(9, 9)} C ${p(13, 13)}, ${p(13, 19)}, ${p(9, 23)}" fill="none" stroke="${VIOLET_SOFT}" stroke-width="${arcStroke}" stroke-linecap="round" ${dash(2.5, 3.5)} transform="rotate(0 ${c} ${c})"/>
-  <path d="M ${p(23, 9)} C ${p(19, 13)}, ${p(19, 19)}, ${p(23, 23)}" fill="none" stroke="${VIOLET_SOFT}" stroke-width="${arcStroke}" stroke-linecap="round" ${dash(2.5, 3.5)}/>
-  <path d="M ${p(16, 6)} L ${p(16, 26)} M ${p(6, 16)} L ${p(26, 16)}" stroke="${AMBER}" stroke-width="${crossStroke}" stroke-linecap="round" ${dash(3, 3.4)}/>
+  <path d="M ${p(9, 9)} C ${p(13, 13)}, ${p(13, 19)}, ${p(9, 23)}" fill="none" stroke="${SLATE}" stroke-width="${arcStroke}" stroke-linecap="round" ${dash(2.5, 3.5)} transform="rotate(0 ${c} ${c})"/>
+  <path d="M ${p(23, 9)} C ${p(19, 13)}, ${p(19, 19)}, ${p(23, 23)}" fill="none" stroke="${SLATE}" stroke-width="${arcStroke}" stroke-linecap="round" ${dash(2.5, 3.5)}/>
+  <path d="M ${p(16, 6)} L ${p(16, 26)} M ${p(6, 16)} L ${p(26, 16)}" stroke="${ORANGE}" stroke-width="${crossStroke}" stroke-linecap="round" ${dash(3, 3.4)}/>
 </svg>`;
 }
 
@@ -45,10 +46,10 @@ const maskable512 = markSvg(512, 168, 18, 27, 25);
 const apple180 = markSvg(180, 68, 6.5, 9.7, 9, 0);
 // favicon: mark only, transparent bg
 const favicon = `<svg width="64" height="64" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="16" cy="16" r="14" fill="none" stroke="${VIOLET}" stroke-width="1.8"/>
-  <path d="M9 9 C 13 13, 13 19, 9 23" stroke="${VIOLET_SOFT}" stroke-width="2.4" fill="none" stroke-dasharray="2.5 3.5" stroke-linecap="round"/>
-  <path d="M23 9 C 19 13, 19 19, 23 23" stroke="${VIOLET_SOFT}" stroke-width="2.4" fill="none" stroke-dasharray="2.5 3.5" stroke-linecap="round"/>
-  <path d="M16 6 L16 26 M6 16 L26 16" stroke="${AMBER}" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 3.4"/>
+  <circle cx="16" cy="16" r="14" fill="none" stroke="${INK}" stroke-width="1.8"/>
+  <path d="M9 9 C 13 13, 13 19, 9 23" stroke="${SLATE}" stroke-width="2.4" fill="none" stroke-dasharray="2.5 3.5" stroke-linecap="round"/>
+  <path d="M23 9 C 19 13, 19 19, 23 23" stroke="${SLATE}" stroke-width="2.4" fill="none" stroke-dasharray="2.5 3.5" stroke-linecap="round"/>
+  <path d="M16 6 L16 26 M6 16 L26 16" stroke="${ORANGE}" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 3.4"/>
 </svg>`;
 
 await mkdir('public/icons', { recursive: true });

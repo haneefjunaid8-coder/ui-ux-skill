@@ -36,8 +36,8 @@ interface Props {
 }
 
 const ZONE_STYLE: Record<string, { color: string; fill: string }> = {
-  campus: { color: '#6E3FE0', fill: 'rgba(110, 63, 224, 0.08)' },
-  township: { color: '#D9822B', fill: 'rgba(217, 130, 43, 0.10)' },
+  campus: { color: '#D15F26', fill: 'rgba(209, 95, 38, 0.08)' },
+  township: { color: '#667589', fill: 'rgba(102, 117, 137, 0.10)' },
 };
 
 function pinIcon(p: MapPin): L.DivIcon {
@@ -159,7 +159,7 @@ export function LiveMap({
         const ll = toLatLng(p.x, p.y);
         return [ll.lat, ll.lng] as [number, number];
       });
-      L.polyline(latlngs, { color: '#5B2EDD', weight: 3.5, opacity: 0.9, dashArray: '2 8', lineCap: 'round' }).addTo(layer);
+      L.polyline(latlngs, { color: '#D15F26', weight: 3.5, opacity: 0.9, dashArray: '2 8', lineCap: 'round' }).addTo(layer);
       bounds.extend(L.latLngBounds(latlngs));
     }
 

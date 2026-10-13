@@ -1,7 +1,8 @@
 /* ============================================================================
    ROOT-X base styles, reset and utilities.
-   Clean light identity (docs/06 §8): white surfaces, soft neutral shadows,
-   a whisper of violet at the top of the canvas. Nothing loud.
+   "Courier" minimal identity (docs/06 §8, D-11 rev 3 — Couriq reference):
+   flat #F3F3F3 canvas, white cards, hairline grey borders, one orange
+   accent. Flat and quiet — depth comes from borders, not shadow.
    ========================================================================== */
 
 @layer reset {
@@ -22,10 +23,7 @@
     font-size: var(--text-base);
     line-height: 1.55;
     color: var(--ink);
-    background:
-      radial-gradient(1100px 480px at 88% -12%, oklch(0.94 0.03 295 / 0.55), transparent 62%),
-      radial-gradient(900px 420px at -8% 108%, oklch(0.96 0.025 75 / 0.4), transparent 58%),
-      var(--canvas);
+    background: var(--canvas);
     min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
   }
@@ -245,7 +243,7 @@
   color: var(--ink-2);
   font-family: var(--font-ui);
   background:
-    radial-gradient(900px 420px at 50% -10%, oklch(0.93 0.03 295 / 0.5), transparent 60%),
+    radial-gradient(900px 420px at 50% -10%, oklch(0.94 0.03 60 / 0.4), transparent 60%),
     var(--canvas);
 }
 
@@ -301,7 +299,7 @@
   width: 16px; height: 16px; border-radius: 50%;
   background: var(--grad-accent);
   border: 2.5px solid #fff;
-  box-shadow: 0 2px 8px oklch(0.19 0.008 258 / 0.35), 0 0 0 1px oklch(0.19 0.008 258 / 0.08);
+  box-shadow: 0 2px 8px oklch(0.13 0.003 260 / 0.28), 0 0 0 1px oklch(0.13 0.003 260 / 0.07);
 }
 .lx-pin--active .lx-pin__dot { animation: lx-pulse 1.8s ease-out infinite; }
 .lx-pin--stale .lx-pin__dot {
@@ -311,7 +309,7 @@
 }
 .lx-pin__pulse {
   position: absolute; inset: 0; border-radius: 50%;
-  background: oklch(0.54 0.21 295 / 0.3);
+  background: oklch(0.585 0.165 47 / 0.28);
   animation: lx-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 .lx-pin--stale .lx-pin__pulse { display: none; }
@@ -321,10 +319,10 @@
   font: 800 11px/1 var(--font-ui);
   color: #fff;
   border: 2px solid #fff;
-  box-shadow: 0 2px 8px oklch(0.19 0.008 258 / 0.3);
+  box-shadow: 0 2px 8px oklch(0.13 0.003 260 / 0.25);
 }
-.lx-pin--pickup { background: var(--adire-600); }
-.lx-pin--dropoff { background: var(--dusk-500); }
+.lx-pin--pickup { background: var(--earth-700); }
+.lx-pin--dropoff { background: var(--root-500); }
 .lx-pin--generic { width: 14px; height: 14px; border-radius: 50%; background: var(--earth-600); border: 2px solid var(--surface); }
 .lx-lm {
   width: 11px; height: 11px; border-radius: 50%;
@@ -336,7 +334,7 @@
 .lx-lm--hi {
   background: var(--root-400);
   border-color: #fff;
-  box-shadow: 0 0 10px oklch(0.54 0.21 295 / 0.45);
+  box-shadow: 0 0 10px oklch(0.585 0.165 47 / 0.4);
 }
 @keyframes lx-ping {
   0% { transform: scale(0.5); opacity: 1; }
