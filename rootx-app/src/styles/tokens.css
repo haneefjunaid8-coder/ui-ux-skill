@@ -1,0 +1,124 @@
+/*
+ * ROOT-X design tokens.
+ * PLACEHOLDER BRANDING: colours, type and spacing are temporary until the
+ * final logo and palette are approved. Change values here only; components
+ * consume the semantic tokens below and never hard-code colours or sizes.
+ */
+:root {
+  /* Brand (placeholder) */
+  --color-brand-50: #e9f3ef;
+  --color-brand-100: #c8e1d7;
+  --color-brand-300: #5fa88c;
+  --color-brand-500: #1e7a5c;
+  --color-brand-600: #0f4c3a; /* primary */
+  --color-brand-700: #0b3b2d;
+  --color-accent-300: #ffd76a;
+  --color-accent-500: #f2a900; /* accent, placeholder */
+  --color-accent-600: #c98a00;
+
+  /* Neutrals */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f7f5ef;
+  --color-neutral-100: #eeebe2;
+  --color-neutral-200: #dcd8cc;
+  --color-neutral-400: #8a867a;
+  --color-neutral-600: #5a574e;
+  --color-neutral-800: #2b2a25;
+  --color-neutral-900: #1a1915;
+
+  /* Feedback */
+  --color-success-600: #1f7a3a;
+  --color-success-50: #e6f4ea;
+  --color-warning-600: #9a5b00;
+  --color-warning-50: #fff4dc;
+  --color-danger-600: #b42318;
+  --color-danger-50: #fde8e6;
+  --color-info-600: #1d4ed8;
+  --color-info-50: #e8efff;
+
+  /* Semantic colour roles */
+  --color-bg: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-0);
+  --color-surface-muted: var(--color-neutral-100);
+  --color-border: var(--color-neutral-200);
+  --color-text: var(--color-neutral-900);
+  --color-text-muted: var(--color-neutral-600);
+  --color-text-subtle: var(--color-neutral-400);
+  --color-primary: var(--color-brand-600);
+  --color-primary-hover: var(--color-brand-700);
+  --color-primary-contrast: #ffffff;
+  --color-accent: var(--color-accent-500);
+  --color-focus: var(--color-accent-600);
+  --color-hero-bg: var(--color-brand-600);
+  --color-hero-text: #ffffff;
+
+  /* Typography */
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text-xs: 0.8125rem; /* 13px */
+  --text-sm: 0.9375rem; /* 15px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.3125rem; /* 21px */
+  --text-2xl: 1.625rem; /* 26px */
+  --text-3xl: 2rem; /* 32px */
+  --text-4xl: 2.5rem; /* 40px */
+  --text-5xl: clamp(2.5rem, 1.6rem + 3.6vw, 3.75rem); /* 40-60px */
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.08em;
+
+  /* Spacing scale (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Radius, elevation, motion */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(26 25 21 / 0.06);
+  --shadow-md: 0 4px 16px rgb(26 25 21 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(26 25 21 / 0.12);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layout */
+  --container-max: 1120px;
+  --container-padding: var(--space-5);
+  --header-height: 4rem;
+  --focus-ring: 0 0 0 3px var(--color-bg), 0 0 0 5px var(--color-focus);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --container-padding: var(--space-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}
