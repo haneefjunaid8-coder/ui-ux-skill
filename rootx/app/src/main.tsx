@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import '@fontsource-variable/manrope';
 import '@fontsource-variable/jetbrains-mono';
 import './styles/tokens.css';
@@ -13,13 +13,23 @@ import App from './App';
 
 registerPwa();
 
+// The single-file build runs from file:// (double-clicked), where path-based
+// routing cannot work — it uses hash routing instead.
+const Router = (() => {
+  try {
+    return __ROOTX_STANDALONE__ ? HashRouter : BrowserRouter;
+  } catch {
+    return BrowserRouter;
+  }
+})();
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RootXProvider>
       <ToastProvider>
-        <BrowserRouter>
+        <Router>
           <App />
-        </BrowserRouter>
+        </Router>
       </ToastProvider>
     </RootXProvider>
   </React.StrictMode>,

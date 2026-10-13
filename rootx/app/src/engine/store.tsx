@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { AppState, Action } from './core';
+import { reducer, init } from './core';
 export * from './core';
 
 /* ============================================================================
@@ -11,12 +12,34 @@ export * from './core';
    replay — never fake success (constraint C-8).
    ========================================================================== */
 
+/* Standalone single-file build (ROOT-X.html): the engine runs in this tab —
+ * no server, localStorage persistence. The networked product mode below is
+ * unchanged. */
+const STANDALONE = (() => {
+  try {
+    return !!__ROOTX_STANDALONE__;
+  } catch {
+    return false;
+  }
+})();
+const LS_KEY = 'rootx-standalone-v1';
+function loadLocal(): AppState | null {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw) as AppState;
+    return s.version === 1 ? { ...s, topups: s.topups ?? [] } : null;
+  } catch {
+    return null;
+  }
+}
+
 const StateCtx = createContext<AppState>(null!);
 const DispatchCtx = createContext<(action: Action) => Promise<{ state?: AppState } | null>>(async () => null);
 const NetCtx = createContext<{ online: boolean; queued: number }>({ online: true, queued: 0 });
 
 export function RootXProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<AppState | null>(null);
+  const [state, setState] = useState<AppState | null>(STANDALONE ? loadLocal() ?? init() : null);
   const [online, setOnline] = useState(true);
   const [queued, setQueued] = useState(0);
   const queue = useRef<Action[]>([]);
@@ -53,6 +76,13 @@ export function RootXProvider({ children }: { children: React.ReactNode }) {
 
   const dispatch = useCallback(
     (action: Action): Promise<{ state?: AppState } | null> => {
+      if (STANDALONE) {
+        const base = stateRef.current ?? loadLocal() ?? init();
+        const next = reducer(base, action);
+        stateRef.current = next;
+        setState(next);
+        return Promise.resolve({ state: next });
+      }
       // Send immediately; if the network fails, queue for retry (never fake
       // success) and resolve null so the caller can show an honest state.
       return (async () => {
@@ -80,10 +110,36 @@ export function RootXProvider({ children }: { children: React.ReactNode }) {
     [flush],
   );
 
+  // standalone: drive the engine clock locally (gateway webhooks, matching,
+  // safety hours) and persist to localStorage; no server to talk to.
+  useEffect(() => {
+    if (!STANDALONE) return;
+    const t = setInterval(() => {
+      setState((s) => {
+        if (!s) return s;
+        const next = reducer(s, { type: 'tick' });
+        stateRef.current = next;
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (STANDALONE && state) {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+      } catch {
+        /* private mode — session-only is fine */
+      }
+    }
+  }, [state]);
+
   // boot: fetch current state, then subscribe to the live stream. The boot
   // fetch is retried while offline so an installed PWA opened without a
   // connection still comes up the moment the network returns.
   useEffect(() => {
+    if (STANDALONE) return;
     let cancelled = false;
     const boot = () => {
       fetch('/api/state', { credentials: 'include' })

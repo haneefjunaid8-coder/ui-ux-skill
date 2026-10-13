@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "build:single": "vite build --config vite.config.single.ts"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
@@ -33,6 +34,7 @@
     "sharp": "^0.35.5",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
+    "vite-plugin-singlefile": "^2.3.3",
     "vitest": "^2.1.8"
   }
 }

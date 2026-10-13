@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react';
 // Preview/deployment note: bind to 0.0.0.0 so the sandbox preview proxy can reach the dev server.
 export default defineConfig({
   plugins: [react()],
+  // __ROOTX_STANDALONE__ is replaced at build time; the single-file build
+  // (vite.config.single.ts) sets it to `true` — everything else sees `false`.
+  define: { __ROOTX_STANDALONE__: 'false' },
   server: {
     host: '0.0.0.0',
     port: 5173,
