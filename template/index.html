@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Shipments</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="home">
+<div class="app">
+  <header class="top">
+    <div class="addr">
+      <span>🚚</span>
+      <div><small>Delivery to</small><strong>11/2 Diriyah, Riyadh</strong></div>
+    </div>
+    <button class="bell" data-soon="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 1112 0v6l1.5 2h-15zM10 21h4"/></svg><em></em></button>
+  </header>
+
+  <div class="searchrow">
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg><input id="searchInput" placeholder="Search"></label>
+    <button class="filter" data-soon="Filters" aria-label="Filter"><svg viewBox="0 0 24 24"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/></svg></button>
+  </div>
+
+  <div class="actions">
+    <a class="act" href="chat.html"><span>New<br>Delivery</span><svg class="truck"><use href="#truck"/></svg></a>
+    <a class="act" href="tracking.html"><span>Track<br>Package</span><svg class="pbox"><use href="#box"/></svg></a>
+  </div>
+
+  <div class="sec"><h3>Current Shipment</h3><a href="#recentList">See All</a></div>
+  <a class="card current" href="tracking.html">
+    <div class="row">
+      <span class="thumb"><i class="mini"></i></span>
+      <div class="meta"><strong>ID: H314315796</strong><small>Mac Mini M4 Pro</small></div>
+      <span class="pill">Transit</span>
+    </div>
+    <div class="steps">
+      <span class="dot done">✓</span><i class="line fill"></i><span class="dot done">✓</span>
+      <i class="line fill"></i><span class="away">🚚<small>4h Away</small></span>
+      <i class="line"></i><span class="dot">✓</span>
+    </div>
+    <div class="route">
+      <div><small>18 Oct 2025</small><strong>Diriyah, Riyadh</strong></div>
+      <div class="r"><small>Estimated 19 Oct 2025</small><strong>Jawhra, Jeddah</strong></div>
+    </div>
+    <svg class="cardbox"><use href="#box"/></svg>
+  </a>
+
+  <div class="sec" id="recentList"><h3>Recent Shipment</h3><a href="#recentList">See All</a></div>
+  <a class="card recent" href="tracking.html">
+    <span class="thumb"><i class="mini"></i></span>
+    <div class="meta"><strong>ID: H314315796</strong><small>Mac Mini M4 Pro</small></div>
+    <span class="pill">On Process</span>
+  </a>
+  <a class="card recent" href="tracking.html">
+    <span class="thumb"><i class="mini sp"></i></span>
+    <div class="meta"><strong>ID: K37856307</strong><small>Sonos Speaker</small></div>
+    <span class="pill">Delivered</span>
+  </a>
+  <a class="card recent" href="tracking.html">
+    <span class="thumb"><i class="mini dr"></i></span>
+    <div class="meta"><strong>ID: D90023411</strong><small>DJI Drone</small></div>
+    <span class="pill">Delivered</span>
+  </a>
+</div>
+
+<nav class="dock">
+  <a class="tab active" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></svg>Home</a>
+  <a class="tab" data-tab="Shipment" href="#recentList"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>Shipment</a>
+  <button class="fab" id="fab" aria-label="New shipment"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <a class="tab" href="tracking.html"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Tracking</a>
+  <a class="tab" href="#" data-soon="Profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>Profile</a>
+</nav>
+<script src="app.js"></script>
+</body>
+</html>

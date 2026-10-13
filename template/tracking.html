@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ececec">
+<title>Location Tracking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="tracking">
+<div class="app">
+  <div class="mapwrap">
+    <header class="maphead">
+      <button class="round" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h2>Location Tracking</h2>
+      <button class="round" data-soon="More options" aria-label="More"><svg viewBox="0 0 24 24" class="fill"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+    </header>
+    <svg class="mapsvg" viewBox="0 0 300 330" preserveAspectRatio="xMidYMid slice">
+      <rect width="300" height="330" fill="#eceded"/>
+      <g fill="#dfe0e1"><rect x="10" y="60" width="50" height="50" rx="4"/><rect x="75" y="50" width="60" height="60" rx="4"/><rect x="150" y="65" width="55" height="45" rx="4"/><rect x="220" y="50" width="70" height="60" rx="4"/><rect x="10" y="135" width="45" height="65" rx="4"/><rect x="75" y="135" width="55" height="65" rx="4"/><rect x="150" y="135" width="60" height="60" rx="4"/><rect x="225" y="135" width="65" height="65" rx="4"/><rect x="10" y="225" width="50" height="90" rx="4"/><rect x="75" y="225" width="60" height="90" rx="4"/><rect x="150" y="225" width="55" height="90" rx="4"/><rect x="225" y="225" width="65" height="90" rx="4"/></g>
+      <g stroke="#fff" stroke-width="8" fill="none"><path d="M0 120h300M0 210h300M65 0v330M140 0v330M215 0v330"/><path d="M0 30l300 260" stroke-width="5"/></g>
+      <path id="routePath" d="M102 330 V290 H172 V210 H228 V160 H190 V110 H228 V80" stroke="#3b3b3d" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <g class="pin"><circle class="pulse" cx="228" cy="70" r="16" fill="#f4673b" opacity=".2"/><circle cx="228" cy="70" r="9" fill="#f4673b" stroke="#fff" stroke-width="3.5"/></g>
+      <g id="car"><circle r="17" fill="#1d1d1f"/><path d="M0 -8l7 15-7-4-7 4z" fill="#fff" stroke="none"/></g>
+    </svg>
+  </div>
+
+  <section class="sheet">
+    <i class="grab"></i>
+    <div class="bk">
+      <div><small>Booking Id</small><strong>H314315796</strong></div>
+      <div class="st"><small>Status</small><span class="pill dk">Transit</span></div>
+    </div>
+    <div class="steps dkst"><span class="dot done">✓</span><i class="line"></i><span class="dot"></span><i class="line"></i><span class="dot"></span><i class="line"></i><span class="dot"></span></div>
+    <div class="dates">
+      <div><small>Created 18 Oct 2025</small><strong>Diriyah, Riyadh</strong></div>
+      <div class="r"><small>Estimated 19 Oct 2025</small><strong>Jawhra, Jeddah</strong></div>
+    </div>
+    <hr>
+    <div class="grid">
+      <div><small>Form</small><b>Diriyah, Riyadh</b></div>
+      <div><small>To</small><b>Jawhra, Jeddah</b></div>
+      <div><small>Customer</small><b>Ahmad Kawsar</b></div>
+      <div><small>Order Cost</small><b>$120.00</b></div>
+      <div><small>Quantity</small><b>1 Box</b></div>
+      <div><small>Weight</small><b>10 Kg</b></div>
+    </div>
+    <svg class="sheetbox"><use href="#box"/></svg>
+  </section>
+
+  <div class="courier">
+    <span class="avatar"></span>
+    <div><strong>Khalid Omor</strong><small>Courier</small></div>
+    <button class="cbtn call" id="callBtn" aria-label="Call"><svg viewBox="0 0 24 24"><path d="M6 3h3l2 5-2 1.5a11 11 0 006 6L16.5 13l5 2v3a3 3 0 01-3 3A16 16 0 013 6a3 3 0 013-3z"/></svg></button>
+    <a class="cbtn msg" href="chat.html" aria-label="Message"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></a>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
